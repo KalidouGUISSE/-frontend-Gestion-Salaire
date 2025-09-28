@@ -21,15 +21,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { payrunsApi } from '@/api/payruns'
 
 const payrunSchema = z.object({
+  title: z.string().min(1, 'Titre requis'),
+  type: z.enum(['MONTHLY', 'WEEKLY', 'DAILY'], { required_error: 'Type requis' }),
   periodStart: z.string().min(1, 'Date de début requise'),
   periodEnd: z.string().min(1, 'Date de fin requise'),
-  periodIdentifier: z.string().optional(),
 })
 
 const columns = [
   {
     accessorKey: 'id',
     header: 'ID',
+  },
+  {
+    accessorKey: 'title',
+    header: 'Titre',
   },
   {
     accessorKey: 'periodStart',
@@ -192,7 +197,7 @@ export default function PayRuns() {
   })
 
   const table = useReactTable({
-    data: data?.data || [],
+    data: data?.data?.data || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -322,9 +327,10 @@ function CreatePayRunDialog({ open, onOpenChange }) {
   const form = useForm({
     resolver: zodResolver(payrunSchema),
     defaultValues: {
+      title: '',
+      type: 'MONTHLY',
       periodStart: '',
       periodEnd: '',
-      periodIdentifier: '',
     },
   })
 
@@ -354,6 +360,41 @@ function CreatePayRunDialog({ open, onOpenChange }) {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Titre du cycle</FormLabel>
+                  <FormControl>
+                    <Input placeholder="ex: PayRun September 2025" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Type</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Sélectionner le type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="MONTHLY">Mensuel</SelectItem>
+                      <SelectItem value="WEEKLY">Hebdomadaire</SelectItem>
+                      <SelectItem value="DAILY">Quotidien</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="periodStart"
               render={({ field }) => (
                 <FormItem>
@@ -373,19 +414,6 @@ function CreatePayRunDialog({ open, onOpenChange }) {
                   <FormLabel>Date de fin</FormLabel>
                   <FormControl>
                     <Input type="date" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="periodIdentifier"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Identifiant de période (optionnel)</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

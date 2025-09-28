@@ -24,7 +24,7 @@ class ApiClient {
     if (token) {
       config.headers = { ...config.headers, Authorization: `Bearer ${token}` }
     }
-
+    
     try {
       const response = await this.client(config)
       return response.data
@@ -34,13 +34,14 @@ class ApiClient {
     }
   }
 
-  get(endpoint, options = {}) {
-    console.log('je  suit la ===========00000000000000000');
-    
+  get(endpoint, options = {}) {    
     return this.request(endpoint, { ...options, method: 'GET' })
   }
 
   post(endpoint, data, options = {}) {
+    console.log('je  suit la ===========00000000000000000');
+    console.log(data);
+    
     return this.request(endpoint, {
       ...options,
       method: 'POST',
@@ -58,6 +59,14 @@ class ApiClient {
 
   delete(endpoint, options = {}) {
     return this.request(endpoint, { ...options, method: 'DELETE' })
+  }
+
+  patch(endpoint, data, options = {}) {
+    return this.request(endpoint, {
+      ...options,
+      method: 'PATCH',
+      data,
+    })
   }
 }
 
