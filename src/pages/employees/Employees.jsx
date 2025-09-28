@@ -59,21 +59,30 @@ function EmployeeActions({ employee }) {
 function EditEmployeeDialog({ employee, open, onOpenChange }) {
   const mutations = useEmployeeMutations()
   const { update } = mutations
-  const defaultValues = useMemo(() => ({
-    fullName: employee.fullName,
-    email: employee.email,
-    phone: employee.phone || '',
-    position: employee.position,
-    contractType: employee.contractType,
-    baseSalary: employee.baseSalary,
-  }), [employee.fullName, employee.email, employee.phone, employee.position, employee.contractType, employee.baseSalary])
+  const defaultValues = useMemo(() => {
+    const [firstName, ...lastNameParts] = (employee.fullName || '').split(' ')
+    const lastName = lastNameParts.join(' ')
+    return {
+      firstName,
+      lastName,
+      email: employee.email,
+      phone: employee.phone || '',
+      position: employee.position,
+      contractType: employee.contractType,
+      salary: employee.salary || employee.baseSalary || 0,
+    }
+  }, [employee.fullName, employee.email, employee.phone, employee.position, employee.contractType, employee.salary, employee.baseSalary])
   const form = useForm({
     resolver: zodResolver(employeeSchema),
     defaultValues,
   })
 
   const onSubmit = (data) => {
-    update.mutate({ id: employee.id, data }, { onSuccess: () => onOpenChange(false) })
+    const apiData = {
+      ...data,
+      fullName: `${data.firstName} ${data.lastName}`,
+    }
+    update.mutate({ id: employee.id, data: apiData }, { onSuccess: () => onOpenChange(false) })
   }
 
   return (
@@ -89,10 +98,23 @@ function EditEmployeeDialog({ employee, open, onOpenChange }) {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="fullName"
+              name="firstName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nom complet</FormLabel>
+                  <FormLabel>Prénom</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="lastName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nom</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -152,9 +174,9 @@ function EditEmployeeDialog({ employee, open, onOpenChange }) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="DAILY">Journalier</SelectItem>
-                      <SelectItem value="FIXED">Fixe</SelectItem>
-                      <SelectItem value="FEE">Honoraire</SelectItem>
+                      <SelectItem value="JOURNALIER">Journalier</SelectItem>
+                      <SelectItem value="FIXE">Fixe</SelectItem>
+                      <SelectItem value="HONORAIRE">Honoraire</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -163,10 +185,10 @@ function EditEmployeeDialog({ employee, open, onOpenChange }) {
             />
             <FormField
               control={form.control}
-              name="baseSalary"
+              name="salary"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Salaire de base</FormLabel>
+                  <FormLabel>Salaire</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -421,12 +443,13 @@ function CreateEmployeeDialog({ open, onOpenChange }) {
   const mutations = useEmployeeMutations()
   const { create } = mutations
   const defaultValues = useMemo(() => ({
-    fullName: '',
+    firstName: '',
+    lastName: '',
     email: '',
     phone: '',
     position: '',
-    contractType: 'FIXED',
-    baseSalary: 0,
+    contractType: 'FIXE',
+    salary: 0,
   }), [])
   const form = useForm({
     resolver: zodResolver(employeeSchema),
@@ -434,7 +457,13 @@ function CreateEmployeeDialog({ open, onOpenChange }) {
   })
 
   const onSubmit = (data) => {
-    create.mutate(data, { onSuccess: () => { onOpenChange(false); form.reset() } })
+    const apiData = {
+      ...data,
+      fullName: `${data.firstName} ${data.lastName}`,
+      hireDate: new Date().toISOString(),
+      isActive: true,
+    }
+    create.mutate(apiData, { onSuccess: () => { onOpenChange(false); form.reset() } })
   }
 
   return (
@@ -450,10 +479,23 @@ function CreateEmployeeDialog({ open, onOpenChange }) {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="fullName"
+              name="firstName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nom complet</FormLabel>
+                  <FormLabel>Prénom</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="lastName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nom</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -513,9 +555,9 @@ function CreateEmployeeDialog({ open, onOpenChange }) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="DAILY">Journalier</SelectItem>
-                      <SelectItem value="FIXED">Fixe</SelectItem>
-                      <SelectItem value="FEE">Honoraire</SelectItem>
+                      <SelectItem value="JOURNALIER">Journalier</SelectItem>
+                      <SelectItem value="FIXE">Fixe</SelectItem>
+                      <SelectItem value="HONORAIRE">Honoraire</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -524,10 +566,10 @@ function CreateEmployeeDialog({ open, onOpenChange }) {
             />
             <FormField
               control={form.control}
-              name="baseSalary"
+              name="salary"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Salaire de base</FormLabel>
+                  <FormLabel>Salaire</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
