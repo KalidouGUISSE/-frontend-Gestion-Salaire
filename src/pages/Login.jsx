@@ -9,7 +9,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { authApi } from '@/api/auth'
 import useAuthStore from '@/store/auth'
-
 import { ErrorHandler } from "@/utils/ErrorHandler";
 
 const loginSchema = z.object({
@@ -20,7 +19,6 @@ const loginSchema = z.object({
 export default function Login() {
   const navigate = useNavigate()
   const { login } = useAuthStore()
-
   const form = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -97,6 +95,14 @@ export default function Login() {
                 disabled={loginMutation.isPending}
               >
                 {loginMutation.isPending ? 'Connexion...' : 'Se connecter'}
+              </Button>
+             <Button
+                type="button"
+                variant="link"
+                className="w-full"
+                onClick={() => navigate('/register')}
+              >
+                S'inscrire
               </Button>
             </form>
           </Form>

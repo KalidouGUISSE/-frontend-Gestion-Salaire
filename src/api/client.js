@@ -24,12 +24,13 @@ class ApiClient {
     if (token) {
       config.headers = { ...config.headers, Authorization: `Bearer ${token}` }
     }
-    
+
     try {
       const response = await this.client(config)
       return response.data
     } catch (error) {
       console.error('API request failed:', error)
+      console.error('API Error data:', error.response.data)
       throw error
     }
   }
@@ -62,6 +63,8 @@ class ApiClient {
   }
 
   patch(endpoint, data, options = {}) {
+    console.log('bbbbbbbbbb');
+    
     return this.request(endpoint, {
       ...options,
       method: 'PATCH',

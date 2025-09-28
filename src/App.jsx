@@ -3,6 +3,7 @@ import { QueryProvider } from './providers/QueryProvider'
 import ProtectedRoute from './components/ProtectedRoute'
 import Layout from './components/Layout'
 import Login from './pages/Login'
+import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 import Employees from './pages/employees/Employees'
 import PayRuns from './pages/PayRuns'
@@ -16,6 +17,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route
             path="/"
             element={
