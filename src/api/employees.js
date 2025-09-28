@@ -54,7 +54,7 @@ export const employeesApi = {
   create: (data) => apiRequest('/employees', { method: 'POST', body: JSON.stringify(data) }),
   update: (id, data) => apiRequest(`/employees/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   delete: (id) => apiRequest(`/employees/${id}`, { method: 'DELETE' }),
-  toggleActive: (id, isActive) => apiRequest(`/employees/${id}/toggle-active`, {
+  toggleActive: (id, isActive) => apiRequest(`/employees/${id}/activate`, {
     method: 'PATCH',
     body: JSON.stringify({ isActive })
   }),

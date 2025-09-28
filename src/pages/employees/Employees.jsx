@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@/components/ui/button'
@@ -191,6 +191,8 @@ function EditEmployeeDialog({ employee, open, onOpenChange }) {
 export default function Employees() {
   const [globalFilter, setGlobalFilter] = useState('')
   const [isCreateOpen, setIsCreateOpen] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemsPerPage, setItemsPerPage] = useState(6)
 
   const { data, isLoading, error } = useEmployees()
   console.log('isLoading:', isLoading);
@@ -209,7 +211,48 @@ export default function Employees() {
     )
   }) || []
 
+  // Pagination
+  const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const paginatedEmployees = filteredEmployees.slice(startIndex, startIndex + itemsPerPage)
+
   const handleExportCSV = () => exportEmployeesToCSV(data?.data)
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page)
+  }
+
+  const handleItemsPerPageChange = (value) => {
+    setItemsPerPage(Number(value))
+    setCurrentPage(1) // Reset to first page when changing items per page
+  }
+
+  // Reset to first page when filter changes
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [globalFilter])
+
+  // Generate page numbers with ellipsis
+  const getPageNumbers = () => {
+    const pages = []
+    const maxVisiblePages = 5
+
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i)
+      }
+    } else {
+      if (currentPage <= 3) {
+        pages.push(1, 2, 3, 4, '...', totalPages)
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(1, '...', totalPages - 3, totalPages - 2, totalPages - 1, totalPages)
+      } else {
+        pages.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages)
+      }
+    }
+
+    return pages
+  }
 
   if (isLoading) return <div>Chargement...</div>
 
@@ -249,8 +292,8 @@ export default function Employees() {
             />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredEmployees?.length ? (
-              filteredEmployees.map((employee) => (
+            {paginatedEmployees?.length ? (
+              paginatedEmployees.map((employee) => (
                 <Card key={employee.id} className="hover:shadow-lg transition-shadow">
                   <CardHeader>
                     <CardTitle className="text-lg">{employee.fullName}</CardTitle>
@@ -268,7 +311,7 @@ export default function Employees() {
                       </div>
                       <div className="flex items-center text-sm text-gray-600">
                         <span className="font-medium">Salaire:</span>
-                        <span className="ml-2">{employee.baseSalary} FCFA</span>
+                        <span className="ml-2">{employee.salary} FCFA</span>
                       </div>
                       <div className="flex items-center text-sm">
                         <span className="font-medium">Statut:</span>
@@ -293,8 +336,78 @@ export default function Employees() {
               </div>
             )}
           </div>
-          <div className="text-sm text-muted-foreground text-center py-4">
-            {filteredEmployees.length} employé(s) trouvé(s)
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <span>{filteredEmployees.length} employé(s) trouvé(s)</span>
+              <Select value={itemsPerPage.toString()} onValueChange={handleItemsPerPageChange}>
+                <SelectTrigger className="w-20">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="3">3</SelectItem>
+                  <SelectItem value="6">6</SelectItem>
+                  <SelectItem value="9">9</SelectItem>
+                  <SelectItem value="12">12</SelectItem>
+                </SelectContent>
+              </Select>
+              <span>par page</span>
+            </div>
+
+            {totalPages > 1 && (
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(1)}
+                  disabled={currentPage === 1}
+                >
+                  Première
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                >
+                  Précédent
+                </Button>
+
+                <div className="flex items-center gap-1 mx-2">
+                  {getPageNumbers().map((page, index) => (
+                    page === '...' ? (
+                      <span key={index} className="px-2 text-muted-foreground">...</span>
+                    ) : (
+                      <Button
+                        key={index}
+                        variant={currentPage === page ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => handlePageChange(page)}
+                        className="w-8 h-8 p-0"
+                      >
+                        {page}
+                      </Button>
+                    )
+                  ))}
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                >
+                  Suivant
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(totalPages)}
+                  disabled={currentPage === totalPages}
+                >
+                  Dernière
+                </Button>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
