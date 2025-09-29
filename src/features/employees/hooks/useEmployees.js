@@ -1,10 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { employeesApi } from '@/api/employees'
 
-export function useEmployees() {
+export function useEmployees(page = 1, limit = 10, filters = {}) {
   return useQuery({
-    queryKey: ['employees'],
-    queryFn: () => employeesApi.getAll(),
+    queryKey: ['employees', page, limit, filters],
+    queryFn: () => employeesApi.getAll({ page, limit, ...filters }),
   })
 }
 

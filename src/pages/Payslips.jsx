@@ -272,7 +272,7 @@ export default function Payslips() {
   }
 
   const table = useReactTable({
-    data: data?.data || [],
+    data: data?.data?.data || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),

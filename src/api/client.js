@@ -27,22 +27,20 @@ class ApiClient {
 
     try {
       const response = await this.client(config)
-      console.log(response.data);
-      
       return response.data
     } catch (error) {
       console.error('API request failed:', error)
-      console.error('API Error data:', error.response.data)
       throw error
     }
   }
 
   get(endpoint, options = {}) {    
+    console.log('je  suit la endpoint',endpoint);
+
     return this.request(endpoint, { ...options, method: 'GET' })
   }
 
   post(endpoint, data, options = {}) {
-    console.log('je  suit la ===========00000000000000000');
     console.log(data);
     
     return this.request(endpoint, {

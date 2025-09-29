@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@/components/ui/button'
@@ -10,7 +11,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { employeeSchema } from '@/validators/employeeValidator'
 import { exportEmployeesToCSV } from '@/utils/csvExporter'
 import { useEmployees, useEmployeeMutations } from '@/features/employees/hooks/useEmployees'
-import { getEmployeesFromResponse } from '@/utils/employees'
 import { LoadingSpinner } from '@/components/Spinner'
 
 
@@ -212,65 +212,65 @@ function EditEmployeeDialog({ employee, open, onOpenChange }) {
 }
 
 export default function Employees() {
+  const [searchParams, setSearchParams] = useSearchParams()
   const [globalFilter, setGlobalFilter] = useState('')
+  const [statusFilter, setStatusFilter] = useState('all')
+  const [contractFilter, setContractFilter] = useState('all')
   const [isCreateOpen, setIsCreateOpen] = useState(false)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [itemsPerPage, setItemsPerPage] = useState(6)
 
-  const { data, isLoading, error } = useEmployees()
+  const page = parseInt(searchParams.get('page') || '1')
+  const limit = parseInt(searchParams.get('limit') || '6')
+
+  const filters = {
+    isActive: statusFilter === 'actif' ? true : statusFilter === 'inactif' ? false : undefined,
+    contractType: contractFilter !== 'all' ? contractFilter : undefined,
+    fullName: globalFilter || undefined,
+  }
+
+  const { data, isLoading, error } = useEmployees(page, limit, filters)
   console.log('isLoading:', isLoading);
   console.log('data:', data);
   console.log('error:', error);
   console.log('data?.data:', data?.data);
-  console.log('data?.data length:', data?.data?.length);
-  const allEmployees = getEmployeesFromResponse(data)
+  console.log('data?.data length:', data?.length);
+  const employees = data?.data?.data || []
+  const meta = data?.data?.meta || {}
+  console.log('Debug - data:', data)
+  console.log('Debug - meta:', meta)
+  console.log('Debug - page:', page, 'lastPage:', meta.lastPage, 'hasNextPage:', meta.hasNextPage, 'hasPrevPage:', meta.hasPrevPage)
 
-  const filteredEmployees = allEmployees?.filter(employee => {
-    const filter = globalFilter.toLowerCase()
-    return (
-      (employee.fullName?.toLowerCase() || '').includes(filter) ||
-      (employee.email?.toLowerCase() || '').includes(filter) ||
-      (employee.position?.toLowerCase() || '').includes(filter)
-    )
-  }) || []
+  const handleExportCSV = () => exportEmployeesToCSV(employees)
 
-  // Pagination
-  const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage)
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const paginatedEmployees = filteredEmployees.slice(startIndex, startIndex + itemsPerPage)
-
-  const handleExportCSV = () => exportEmployeesToCSV(data?.data)
-
-  const handlePageChange = (page) => {
-    setCurrentPage(page)
+  const handlePageChange = (newPage) => {
+    setSearchParams({ page: newPage.toString(), limit: limit.toString() })
   }
 
   const handleItemsPerPageChange = (value) => {
-    setItemsPerPage(Number(value))
-    setCurrentPage(1) // Reset to first page when changing items per page
+    setSearchParams({ page: '1', limit: value })
   }
 
   // Reset to first page when filter changes
   useEffect(() => {
-    setCurrentPage(1)
-  }, [globalFilter])
+    setSearchParams({ page: '1', limit: limit.toString() })
+  }, [globalFilter, statusFilter, contractFilter, limit, setSearchParams])
 
   // Generate page numbers with ellipsis
   const getPageNumbers = () => {
     const pages = []
     const maxVisiblePages = 5
+    const totalPages = meta.lastPage || 1
 
     if (totalPages <= maxVisiblePages) {
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i)
       }
     } else {
-      if (currentPage <= 3) {
+      if (page <= 3) {
         pages.push(1, 2, 3, 4, '...', totalPages)
-      } else if (currentPage >= totalPages - 2) {
+      } else if (page >= totalPages - 2) {
         pages.push(1, '...', totalPages - 3, totalPages - 2, totalPages - 1, totalPages)
       } else {
-        pages.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages)
+        pages.push(1, '...', page - 1, page, page + 1, '...', totalPages)
       }
     }
 
@@ -302,21 +302,44 @@ export default function Employees() {
         <CardHeader>
           <CardTitle>Liste des employés</CardTitle>
           <CardDescription>
-            {data?.total || 0} employé(s)
+            {meta.total || 0} employé(s)
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center py-4">
+          {/* <div className="flex items-center py-4">
             <Input
               placeholder="Rechercher..."
               value={globalFilter ?? ''}
               onChange={(event) => setGlobalFilter(String(event.target.value))}
               className="max-w-sm"
             />
+          </div> */}
+          <div className="flex items-center gap-4 py-4">
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-32">
+                <SelectValue placeholder="Statut" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tous</SelectItem>
+                <SelectItem value="actif">Actif</SelectItem>
+                <SelectItem value="inactif">Inactif</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={contractFilter} onValueChange={setContractFilter}>
+              <SelectTrigger className="w-40">
+                <SelectValue placeholder="Contrat" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tous</SelectItem>
+                <SelectItem value="JOURNALIER">Journalier</SelectItem>
+                <SelectItem value="FIXE">Fixe</SelectItem>
+                <SelectItem value="HONORAIRE">Honoraire</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {paginatedEmployees?.length ? (
-              paginatedEmployees.map((employee) => (
+            {employees?.length ? (
+              employees.map((employee) => (
                 <Card key={employee.id} className="hover-lift interactive-card">
                   <CardHeader>
                     <CardTitle className="text-lg">{employee.fullName}</CardTitle>
@@ -361,8 +384,8 @@ export default function Employees() {
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>{filteredEmployees.length} employé(s) trouvé(s)</span>
-              <Select value={itemsPerPage.toString()} onValueChange={handleItemsPerPageChange}>
+              <span>{meta.total || 0} employé(s) trouvé(s)</span>
+              <Select value={limit.toString()} onValueChange={handleItemsPerPageChange}>
                 <SelectTrigger className="w-20">
                   <SelectValue />
                 </SelectTrigger>
@@ -376,38 +399,38 @@ export default function Employees() {
               <span>par page</span>
             </div>
 
-            {totalPages > 1 && (
+            {(meta.lastPage || 1) > 1 && (
               <div className="flex items-center gap-1">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => handlePageChange(1)}
-                  disabled={currentPage === 1}
+                  disabled={!meta.hasPrevPage && page === 1}
                 >
-                  Première
+                  Première page
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage === 1}
+                  onClick={() => handlePageChange(page - 1)}
+                  disabled={!meta.hasPrevPage}
                 >
                   Précédent
                 </Button>
 
                 <div className="flex items-center gap-1 mx-2">
-                  {getPageNumbers().map((page, index) => (
-                    page === '...' ? (
+                  {getPageNumbers().map((pageNum, index) => (
+                    pageNum === '...' ? (
                       <span key={index} className="px-2 text-muted-foreground">...</span>
                     ) : (
                       <Button
                         key={index}
-                        variant={currentPage === page ? "default" : "outline"}
+                        variant={page === pageNum ? "default" : "outline"}
                         size="sm"
-                        onClick={() => handlePageChange(page)}
+                        onClick={() => handlePageChange(pageNum)}
                         className="w-8 h-8 p-0"
                       >
-                        {page}
+                        {pageNum}
                       </Button>
                     )
                   ))}
@@ -416,18 +439,18 @@ export default function Employees() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage === totalPages}
+                  onClick={() => handlePageChange(page + 1)}
+                  disabled={!meta.hasNextPage}
                 >
                   Suivant
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => handlePageChange(totalPages)}
-                  disabled={currentPage === totalPages}
+                  onClick={() => handlePageChange(meta.lastPage || 1)}
+                  disabled={!meta.hasNextPage && page === (meta.lastPage || 1)}
                 >
-                  Dernière
+                  Dernière page
                 </Button>
               </div>
             )}
