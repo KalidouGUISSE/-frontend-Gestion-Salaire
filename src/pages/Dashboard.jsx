@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { dashboardApi } from '@/api/dashboard'
+import { LoadingSpinner } from '@/components/Spinner'
 
 export default function Dashboard() {
   const { data: kpis, isLoading: kpisLoading } = useQuery({
@@ -19,7 +20,7 @@ export default function Dashboard() {
     queryFn: () => dashboardApi.getNextPayments(),
   })
 
-  if (kpisLoading || evolutionLoading || paymentsLoading) return <div>Chargement...</div>
+  if (kpisLoading || evolutionLoading || paymentsLoading) return <LoadingSpinner />
 
   return (
     <div className="space-y-8">

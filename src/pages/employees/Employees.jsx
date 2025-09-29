@@ -11,6 +11,7 @@ import { employeeSchema } from '@/validators/employeeValidator'
 import { exportEmployeesToCSV } from '@/utils/csvExporter'
 import { useEmployees, useEmployeeMutations } from '@/features/employees/hooks/useEmployees'
 import { getEmployeesFromResponse } from '@/utils/employees'
+import { LoadingSpinner } from '@/components/Spinner'
 
 
 function EmployeeActions({ employee }) {
@@ -276,7 +277,7 @@ export default function Employees() {
     return pages
   }
 
-  if (isLoading) return <div>Chargement...</div>
+  if (isLoading) return <LoadingSpinner />
 
   return (
     <div className="space-y-6">

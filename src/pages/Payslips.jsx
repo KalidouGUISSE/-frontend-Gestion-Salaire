@@ -20,6 +20,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { payslipsApi } from '@/api/payslips'
 import Papa from 'papaparse'
+import { LoadingSpinner } from '@/components/Spinner'
 
 const payslipSchema = z.object({
   gross: z.number().min(0, 'Brut doit être positif'),
@@ -284,7 +285,7 @@ export default function Payslips() {
     onGlobalFilterChange: setGlobalFilter,
   })
 
-  if (isLoading) return <div>Chargement...</div>
+  if (isLoading) return <LoadingSpinner />
 
   return (
     <div className="space-y-6">

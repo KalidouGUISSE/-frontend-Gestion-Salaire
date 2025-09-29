@@ -21,6 +21,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { paymentsApi } from '@/api/payments'
 import { payslipsApi } from '@/api/payslips'
 import Papa from 'papaparse'
+import { LoadingSpinner } from '@/components/Spinner'
 
 const paymentSchema = z.object({
   payslipId: z.number().min(1, 'Bulletin requis'),
@@ -144,7 +145,7 @@ export default function Payments() {
     onGlobalFilterChange: setGlobalFilter,
   })
 
-  if (isLoading) return <div>Chargement...</div>
+  if (isLoading) return <LoadingSpinner />
 
   return (
     <div className="space-y-6">

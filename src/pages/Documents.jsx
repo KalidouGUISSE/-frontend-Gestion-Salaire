@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { documentsApi } from '@/api/documents'
+import { LoadingSpinner } from '@/components/Spinner'
 
 const columns = [
   {
@@ -85,7 +86,7 @@ export default function Documents() {
     onGlobalFilterChange: setGlobalFilter,
   })
 
-  if (isLoading) return <div>Chargement...</div>
+  if (isLoading) return <LoadingSpinner />
 
   return (
     <div className="space-y-6">

@@ -19,6 +19,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { payrunsApi } from '@/api/payruns'
+import { LoadingSpinner } from '@/components/Spinner'
 
 const payrunSchema = z.object({
   title: z.string().min(1, 'Titre requis'),
@@ -153,7 +154,7 @@ function PayRunDetailDialog({ payrun, open, onOpenChange }) {
           </DialogDescription>
         </DialogHeader>
         {isLoading ? (
-          <div>Chargement...</div>
+          <LoadingSpinner />
         ) : (
           <div>
             <h3 className="text-lg font-semibold mb-4">Bulletins de paie</h3>
@@ -213,7 +214,7 @@ export default function PayRuns() {
     onGlobalFilterChange: setGlobalFilter,
   })
 
-  if (isLoading) return <div>Chargement...</div>
+  if (isLoading) return <LoadingSpinner />
 
   return (
     <div className="space-y-6">
