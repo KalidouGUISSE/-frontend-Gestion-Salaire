@@ -33,8 +33,13 @@ export default function Login() {
       login(data.user, data.accessToken)
       localStorage.setItem('auth-token', data.accessToken)
       console.log('data.token',data.accessToken);
-      
-      navigate('/dashboard')
+
+      // Redirect based on role
+      if (data.user.role === 'SUPER_ADMIN') {
+        navigate('/super-admin-dashboard')
+      } else {
+        navigate('/dashboard')
+      }
     },
     onError: (error) => {
       const message = ErrorHandler.getMessage(error);
