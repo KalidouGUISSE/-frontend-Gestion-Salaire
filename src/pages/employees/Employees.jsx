@@ -316,7 +316,7 @@ export default function Employees() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {paginatedEmployees?.length ? (
               paginatedEmployees.map((employee) => (
-                <Card key={employee.id} className="hover:shadow-lg transition-shadow">
+                <Card key={employee.id} className="hover-lift interactive-card">
                   <CardHeader>
                     <CardTitle className="text-lg">{employee.fullName}</CardTitle>
                     <CardDescription>{employee.position}</CardDescription>

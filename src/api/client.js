@@ -27,6 +27,8 @@ class ApiClient {
 
     try {
       const response = await this.client(config)
+      console.log(response.data);
+      
       return response.data
     } catch (error) {
       console.error('API request failed:', error)

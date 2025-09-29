@@ -140,6 +140,9 @@ function PayRunDetailDialog({ payrun, open, onOpenChange }) {
     enabled: open,
   })
 
+  console.log(payslips?.data?.data);
+  
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl">
@@ -154,7 +157,7 @@ function PayRunDetailDialog({ payrun, open, onOpenChange }) {
         ) : (
           <div>
             <h3 className="text-lg font-semibold mb-4">Bulletins de paie</h3>
-            {payslips?.data?.length ? (
+            {payslips?.data?.data?.length ? (
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -166,7 +169,7 @@ function PayRunDetailDialog({ payrun, open, onOpenChange }) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {payslips.data.map((payslip) => (
+                  {payslips.data.data.map((payslip) => (
                     <TableRow key={payslip.id}>
                       <TableCell>{payslip.employee.fullName}</TableCell>
                       <TableCell>{payslip.gross} FCFA</TableCell>
