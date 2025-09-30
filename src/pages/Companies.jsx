@@ -50,12 +50,16 @@ export default function Companies() {
     setIsDialogOpen(true)
   }
 
-  const { delete: deleteCompany, create, update } = useCompanyMutations()
+  const { delete: deleteCompany, create, update, activate } = useCompanyMutations()
 
   const handleDelete = (id) => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer cette entreprise ?')) {
       deleteCompany.mutate(id)
     }
+  }
+
+  const handleActivate = (id, isActive) => {
+    activate.mutate({ id, isActive })
   }
 
   const handleSubmit = (e) => {
@@ -114,6 +118,7 @@ export default function Companies() {
                 <TableHead>Adresse</TableHead>
                 <TableHead>Devise</TableHead>
                 <TableHead>Type de période</TableHead>
+                <TableHead>Statut</TableHead>
                 <TableHead>Date de création</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -125,6 +130,15 @@ export default function Companies() {
                   <TableCell>{company.address}</TableCell>
                   <TableCell>{company.currency}</TableCell>
                   <TableCell>{company.payPeriodType === 'MONTHLY' ? 'Mensuel' : company.payPeriodType === 'WEEKLY' ? 'Hebdomadaire' : 'Journalier'}</TableCell>
+                  <TableCell>
+                    <span className={`px-2 py-1 rounded-full text-xs ${
+                      company.isActive
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
+                    }`}>
+                      {company.isActive ? 'Actif' : 'Inactif'}
+                    </span>
+                  </TableCell>
                   <TableCell>{new Date(company.createdAt).toLocaleDateString()}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end space-x-2">
@@ -132,7 +146,7 @@ export default function Companies() {
                         variant="default"
                         size="sm"
                         className="bg-blue-600 text-white hover:bg-blue-700"
-                        onClick={() => navigate(`/employees/`)}
+                        onClick={() => navigate(`/employees/company/${company.id}`)}
                       >
                         Accéder
                       </Button>
@@ -142,6 +156,13 @@ export default function Companies() {
                         onClick={() => handleView(company)}
                       >
                         <Eye className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleActivate(company.id, !company.isActive)}
+                      >
+                        {company.isActive ? 'Désactiver' : 'Activer'}
                       </Button>
                       <Button
                         variant="outline"

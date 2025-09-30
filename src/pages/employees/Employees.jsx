@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams, useParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@/components/ui/button'
@@ -11,6 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { employeeSchema } from '@/validators/employeeValidator'
 import { exportEmployeesToCSV } from '@/utils/csvExporter'
 import { useEmployees, useEmployeeMutations } from '@/features/employees/hooks/useEmployees'
+import { useQuery } from '@tanstack/react-query'
+import { companiesApi } from '@/api/companies'
 import { LoadingSpinner } from '@/components/Spinner'
 
 
@@ -213,18 +215,19 @@ function EditEmployeeDialog({ employee, open, onOpenChange }) {
 
 export default function Employees() {
   const [searchParams, setSearchParams] = useSearchParams()
-  const [globalFilter, setGlobalFilter] = useState('')
+  const { companyId: paramCompanyId } = useParams()
   const [statusFilter, setStatusFilter] = useState('all')
   const [contractFilter, setContractFilter] = useState('all')
   const [isCreateOpen, setIsCreateOpen] = useState(false)
 
   const page = parseInt(searchParams.get('page') || '1')
   const limit = parseInt(searchParams.get('limit') || '6')
+  const companyId = paramCompanyId || searchParams.get('companyId')
 
   const filters = {
     isActive: statusFilter === 'actif' ? true : statusFilter === 'inactif' ? false : undefined,
     contractType: contractFilter !== 'all' ? contractFilter : undefined,
-    fullName: globalFilter || undefined,
+    companyId: companyId ? parseInt(companyId) : undefined,
   }
 
   const { data, isLoading, error } = useEmployees(page, limit, filters)
@@ -239,6 +242,12 @@ export default function Employees() {
   console.log('Debug - meta:', meta)
   console.log('Debug - page:', page, 'lastPage:', meta.lastPage, 'hasNextPage:', meta.hasNextPage, 'hasPrevPage:', meta.hasPrevPage)
 
+  const { data: companyData } = useQuery({
+    queryKey: ['company', companyId],
+    queryFn: () => companiesApi.getById(companyId),
+    enabled: !!companyId
+  })
+
   const handleExportCSV = () => exportEmployeesToCSV(employees)
 
   const handlePageChange = (newPage) => {
@@ -252,7 +261,7 @@ export default function Employees() {
   // Reset to first page when filter changes
   useEffect(() => {
     setSearchParams({ page: '1', limit: limit.toString() })
-  }, [globalFilter, statusFilter, contractFilter, limit, setSearchParams])
+  }, [statusFilter, contractFilter, limit, setSearchParams])
 
   // Generate page numbers with ellipsis
   const getPageNumbers = () => {
@@ -283,9 +292,11 @@ export default function Employees() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Employés</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            {companyData?.data?.name ? `Employés de ${companyData.data.name}` : 'Employés'}
+          </h1>
           <p className="text-gray-600 mt-2">
-            Gérez vos employés
+            {companyData?.data?.name ? `Gérez les employés de ${companyData.data.name}` : 'Gérez vos employés'}
           </p>
         </div>
         <div className="flex space-x-2">
@@ -458,12 +469,12 @@ export default function Employees() {
         </CardContent>
       </Card>
 
-      <CreateEmployeeDialog open={isCreateOpen} onOpenChange={setIsCreateOpen} />
+      <CreateEmployeeDialog open={isCreateOpen} onOpenChange={setIsCreateOpen} companyId={companyId} />
     </div>
   )
 }
 
-function CreateEmployeeDialog({ open, onOpenChange }) {
+function CreateEmployeeDialog({ open, onOpenChange, companyId }) {
   const mutations = useEmployeeMutations()
   const { create } = mutations
   const defaultValues = useMemo(() => ({
@@ -486,6 +497,9 @@ function CreateEmployeeDialog({ open, onOpenChange }) {
       fullName: `${data.firstName} ${data.lastName}`,
       hireDate: new Date().toISOString(),
       isActive: true,
+    }
+    if (companyId) {
+      apiData.companyId = parseInt(companyId)
     }
     create.mutate(apiData, { onSuccess: () => { onOpenChange(false); form.reset() } })
   }
