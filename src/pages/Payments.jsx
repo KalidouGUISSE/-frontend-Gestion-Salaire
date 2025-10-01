@@ -267,7 +267,7 @@ export default function Payments() {
       <CreatePaymentDialog
         open={isCreateOpen}
         onOpenChange={setIsCreateOpen}
-        payslips={payslips?.data || []}
+        payslips={payslips?.data?.data || []}
       />
     </div>
   )
@@ -396,4 +396,5 @@ function CreatePaymentDialog({ open, onOpenChange, payslips }) {
       </DialogContent>
     </Dialog>
   )
+
 }

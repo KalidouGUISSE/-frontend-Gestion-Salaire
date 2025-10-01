@@ -14,11 +14,13 @@ import { useEmployees, useEmployeeMutations } from '@/features/employees/hooks/u
 import { useQuery } from '@tanstack/react-query'
 import { companiesApi } from '@/api/companies'
 import { LoadingSpinner } from '@/components/Spinner'
+import useAuthStore from '@/store/auth'
 
 function EmployeeActions({ employee }) {
   const [isEditOpen, setIsEditOpen] = useState(false)
   const mutations = useEmployeeMutations()
   const { toggleActive, delete: deleteMutation } = mutations
+  const { user } = useAuthStore()
 
   return (
     <div className="flex space-x-2">
@@ -27,38 +29,42 @@ function EmployeeActions({ employee }) {
           Voir détails
         </Button>
       </Link>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => setIsEditOpen(true)}
-      >
-        Modifier
-      </Button>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => toggleActive.mutate({ id: employee.id, isActive: !employee.isActive })}
-        disabled={toggleActive.isPending}
-      >
-        {employee.isActive ? 'Désactiver' : 'Activer'}
-      </Button>
-      <Button
-        variant="destructive"
-        size="sm"
-        onClick={() => {
-          if (confirm('Êtes-vous sûr de vouloir supprimer cet employé ?')) {
-            deleteMutation.mutate(employee.id)
-          }
-        }}
-        disabled={deleteMutation.isPending}
-      >
-        Supprimer
-      </Button>
-      <EditEmployeeDialog
-        employee={employee}
-        open={isEditOpen}
-        onOpenChange={setIsEditOpen}
-      />
+      {user?.role !== 'CASHIER' && (
+        <>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsEditOpen(true)}
+          >
+            Modifier
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => toggleActive.mutate({ id: employee.id, isActive: !employee.isActive })}
+            disabled={toggleActive.isPending}
+          >
+            {employee.isActive ? 'Désactiver' : 'Activer'}
+          </Button>
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={() => {
+              if (confirm('Êtes-vous sûr de vouloir supprimer cet employé ?')) {
+                deleteMutation.mutate(employee.id)
+              }
+            }}
+            disabled={deleteMutation.isPending}
+          >
+            Supprimer
+          </Button>
+          <EditEmployeeDialog
+            employee={employee}
+            open={isEditOpen}
+            onOpenChange={setIsEditOpen}
+          />
+        </>
+      )}
     </div>
   )
 }
@@ -223,6 +229,7 @@ export default function Employees() {
   const [statusFilter, setStatusFilter] = useState('all')
   const [contractFilter, setContractFilter] = useState('all')
   const [isCreateOpen, setIsCreateOpen] = useState(false)
+  const { user } = useAuthStore()
 
   const page = parseInt(searchParams.get('page') || '1')
   const limit = parseInt(searchParams.get('limit') || '6')
@@ -307,9 +314,11 @@ export default function Employees() {
           <Button variant="outline" onClick={handleExportCSV}>
             Exporter CSV
           </Button>
-          <Button onClick={() => setIsCreateOpen(true) }>
-            Ajouter un employé
-          </Button>
+          {user?.role !== 'CASHIER' && (
+            <Button onClick={() => setIsCreateOpen(true) }>
+              Ajouter un employé
+            </Button>
+          )}
         </div>
       </div>
 
@@ -482,7 +491,9 @@ export default function Employees() {
         </CardContent>
       </Card>
 
-      <CreateEmployeeDialog open={isCreateOpen} onOpenChange={setIsCreateOpen} companyId={companyId} />
+      {user?.role !== 'CASHIER' && (
+        <CreateEmployeeDialog open={isCreateOpen} onOpenChange={setIsCreateOpen} companyId={companyId} />
+      )}
     </div>
   )
 }

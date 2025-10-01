@@ -19,6 +19,17 @@ import Documents from './pages/Documents'
 import useAuthStore from './store/auth'
 import { validateConfig } from './config/app'
 
+// Role-based route guard component
+function RoleBasedRoute({ children, allowedRoles }) {
+  const { user } = useAuthStore()
+
+  if (!user || !allowedRoles.includes(user.role)) {
+    return <Navigate to="/dashboard" replace />
+  }
+
+  return children
+}
+
 function DashboardRedirect() {
   const { user } = useAuthStore()
   if (user?.role === 'SUPER_ADMIN') {
@@ -55,13 +66,33 @@ function App() {
               <Route path="super-admin-dashboard" element={<SuperAdminDashboard />} />
               <Route path="companies" element={<Companies />} />
               <Route path="users" element={<Users />} />
-              <Route path="employees" element={<Employees />} />
-              <Route path="employees/:id" element={<EmployeeDetails />} />
-              <Route path="/employees/company/:companyId" element={<Employees />} />
-              <Route path="payruns" element={<PayRuns />} />
+              <Route path="employees" element={
+                <RoleBasedRoute allowedRoles={['ADMIN', 'SUPER_ADMIN']}>
+                  <Employees />
+                </RoleBasedRoute>
+              } />
+              <Route path="employees/:id" element={
+                <RoleBasedRoute allowedRoles={['ADMIN', 'SUPER_ADMIN', 'CASHIER']}>
+                  <EmployeeDetails />
+                </RoleBasedRoute>
+              } />
+              <Route path="/employees/company/:companyId" element={
+                <RoleBasedRoute allowedRoles={['ADMIN', 'SUPER_ADMIN']}>
+                  <Employees />
+                </RoleBasedRoute>
+              } />
+              <Route path="payruns" element={
+                <RoleBasedRoute allowedRoles={['ADMIN', 'SUPER_ADMIN']}>
+                  <PayRuns />
+                </RoleBasedRoute>
+              } />
               <Route path="payslips" element={<Payslips />} />
               <Route path="payments" element={<Payments />} />
-              <Route path="documents" element={<Documents />} />
+              <Route path="documents" element={
+                <RoleBasedRoute allowedRoles={['ADMIN', 'SUPER_ADMIN']}>
+                  <Documents />
+                </RoleBasedRoute>
+              } />
             </Route>
           </Routes>
           <PWAInstallBanner />
