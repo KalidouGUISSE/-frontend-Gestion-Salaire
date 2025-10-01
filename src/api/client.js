@@ -92,21 +92,21 @@ class ApiClient {
         status: error.response.status,
         message: error.response.data?.message || error.response.statusText,
         data: error.response.data,
-        type: 'server_error'
+        type: 'server_error',
       }
     } else if (error.request) {
       // Network error
       return {
         status: 0,
         message: 'Erreur de connexion. Vérifiez votre connexion internet.',
-        type: 'network_error'
+        type: 'network_error',
       }
     } else {
       // Other error
       return {
         status: 0,
         message: error.message || 'Une erreur inattendue s\'est produite',
-        type: 'unknown_error'
+        type: 'unknown_error',
       }
     }
   }
@@ -120,6 +120,7 @@ class ApiClient {
       url: endpoint,
       ...options,
     }
+    console.log('===============config===========',config)
 
     try {
       const response = await this.client(config)
@@ -139,7 +140,8 @@ class ApiClient {
   }
 
   post(endpoint, data, options = {}) {
-    console.log(data);
+    
+    console.log('===============data===========',data)
     
     return this.request(endpoint, {
       ...options,

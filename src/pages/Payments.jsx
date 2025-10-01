@@ -396,5 +396,4 @@ function CreatePaymentDialog({ open, onOpenChange, payslips }) {
       </DialogContent>
     </Dialog>
   )
-
 }
