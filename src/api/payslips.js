@@ -3,6 +3,7 @@ import apiClient from './client.js'
 export const payslipsApi = {
   getAll: (params) => apiClient.get('/payslips', { params }),
   getById: (id) => apiClient.get(`/payslips/${id}`),
+  getByEmployeeId: (employeeId) => apiClient.get(`/payslips/employee/${employeeId}`),
   create: (data) => apiClient.post('/payslips', data),
   update: (id, data) => apiClient.put(`/payslips/${id}`, data),
   delete: (id) => apiClient.delete(`/payslips/${id}`),

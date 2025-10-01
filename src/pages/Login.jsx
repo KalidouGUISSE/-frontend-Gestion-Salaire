@@ -52,19 +52,29 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-indigo-50 p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-4 relative overflow-hidden">
+      {/* Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-modern rounded-full opacity-20 blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-accent rounded-full opacity-20 blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-blue-100/30 to-purple-100/30 rounded-full blur-3xl"></div>
+      </div>
+
+      <div className="w-full max-w-md relative z-10">
         {/* Logo/Brand Section */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl shadow-lg mb-4">
-            <span className="text-2xl font-bold text-white">GS</span>
+        <div className="text-center mb-12">
+          <div className="relative inline-flex items-center justify-center mb-6">
+            <div className="w-20 h-20 bg-gradient-modern rounded-3xl flex items-center justify-center shadow-floating">
+              <span className="text-3xl font-bold text-white">GS</span>
+            </div>
+            <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-accent rounded-full animate-pulse"></div>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Bienvenue</h1>
-          <p className="text-gray-600">Connectez-vous à votre compte</p>
+          <h1 className="text-4xl font-bold text-foreground mb-3">Bienvenue</h1>
+          <p className="text-lg text-muted-foreground">Connectez-vous à votre espace professionnel</p>
         </div>
 
         {/* Login Card */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/50 p-8">
+        <div className="glass-premium rounded-3xl p-8 shadow-floating border border-white/20">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
@@ -72,77 +82,90 @@ export default function Login() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm font-medium text-gray-700">Adresse email</FormLabel>
+                    <FormLabel className="text-sm font-semibold text-foreground">Adresse email</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Input
                           placeholder="votre@email.com"
-                          className="pl-4 pr-4 py-3 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                          className="input-modern h-14 pl-12 pr-4 text-base bg-white/50 border-white/30 focus:bg-white focus:border-primary"
                           {...field}
                         />
-                        <svg className="absolute right-3 top-3.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
-                        </svg>
+                        <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
+                          <svg className="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                          </svg>
+                        </div>
                       </div>
                     </FormControl>
-                    <FormMessage className="text-red-500 text-sm mt-1"/>
+                    <FormMessage className="text-destructive text-sm mt-2"/>
                   </FormItem>
                 )}
               />
+              
               <FormField
                 control={form.control}
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm font-medium text-gray-700">Mot de passe</FormLabel>
+                    <FormLabel className="text-sm font-semibold text-foreground">Mot de passe</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Input
                           type="password"
-                          className="pl-4 pr-4 py-3 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                          placeholder="••••••••"
+                          className="input-modern h-14 pl-12 pr-4 text-base bg-white/50 border-white/30 focus:bg-white focus:border-primary"
                           {...field}
                         />
-                        <svg className="absolute right-3 top-3.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                        </svg>
+                        <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
+                          <svg className="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                          </svg>
+                        </div>
                       </div>
                     </FormControl>
-                    <FormMessage className="text-red-500 text-sm mt-1" />
+                    <FormMessage className="text-destructive text-sm mt-2" />
                   </FormItem>
                 )}
               />
+
               {form.formState.errors.root && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                <div className="bg-destructive/10 border border-destructive/20 rounded-2xl p-4">
                   <div className="flex items-center">
-                    <svg className="w-5 h-5 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span className="text-red-700 text-sm">{form.formState.errors.root.message}</span>
+                    <div className="w-5 h-5 bg-destructive rounded-full flex items-center justify-center mr-3">
+                      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </div>
+                    <span className="text-destructive text-sm font-medium">{form.formState.errors.root.message}</span>
                   </div>
                 </div>
               )}
+
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
+                className="w-full h-14 bg-gradient-modern hover:shadow-glow text-white font-semibold text-base rounded-2xl transition-modern"
                 disabled={loginMutation.isPending}
               >
                 {loginMutation.isPending ? (
                   <div className="flex items-center justify-center">
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-3"></div>
                     Connexion en cours...
                   </div>
                 ) : (
-                  'Se connecter'
+                  <div className="flex items-center justify-center">
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                    </svg>
+                    Se connecter
+                  </div>
                 )}
               </Button>
-              <div className="text-center">
+
+              <div className="text-center pt-4">
                 <Button
                   type="button"
                   variant="link"
-                  className="text-blue-600 hover:text-blue-700 font-medium transition-colors duration-200"
+                  className="text-primary hover:text-primary-hover font-semibold transition-modern text-base"
                   onClick={() => navigate('/register')}
                 >
                   Pas encore de compte ? S'inscrire
@@ -153,10 +176,11 @@ export default function Login() {
         </div>
 
         {/* Footer */}
-        <div className="text-center mt-6">
-          <p className="text-sm text-gray-500">
-            Gestion des Salaires • Version 1.0
-          </p>
+        <div className="text-center mt-8">
+          <div className="inline-flex items-center space-x-2 text-sm text-muted-foreground bg-white/50 rounded-full px-4 py-2">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span>Gestion des Salaires • Version Pro 2025</span>
+          </div>
         </div>
       </div>
     </div>

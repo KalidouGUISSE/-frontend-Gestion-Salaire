@@ -1,13 +1,92 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
+    
+    <!-- Favicon et icônes -->
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>frontend</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192x192.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16x16.png" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- Meta tags pour mobile et PWA -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#6366f1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Gestion Salaires" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    
+    <!-- SEO et description -->
+    <title>Gestion des Salaires - Application Professionnelle</title>
+    <meta name="description" content="Application professionnelle de gestion des salaires, paie et ressources humaines. Interface moderne et sécurisée pour la gestion du personnel." />
+    <meta name="keywords" content="gestion salaires, paie, RH, ressources humaines, employés, bulletins paie" />
+    <meta name="author" content="Gestion Salaires Team" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://gestion-salaires.com/" />
+    <meta property="og:title" content="Gestion des Salaires - Application Professionnelle" />
+    <meta property="og:description" content="Application professionnelle de gestion des salaires et de la paie" />
+    <meta property="og:image" content="/icons/icon-512x512.png" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://gestion-salaires.com/" />
+    <meta property="twitter:title" content="Gestion des Salaires - Application Professionnelle" />
+    <meta property="twitter:description" content="Application professionnelle de gestion des salaires et de la paie" />
+    <meta property="twitter:image" content="/icons/icon-512x512.png" />
+    
+    <!-- Preconnect pour les performances -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Sécurité -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-Frame-Options" content="DENY" />
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+    
+    <!-- Splash screens pour iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    
+    <!-- Préchargement critique -->
+    <link rel="preload" href="/src/index.css" as="style" />
   </head>
   <body>
     <div id="root"></div>
+    
+    <!-- Fallback pour JavaScript désactivé -->
+    <noscript>
+      <div style="
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        text-align: center;
+        padding: 2rem;
+      ">
+        <div style="
+          background: white;
+          padding: 3rem;
+          border-radius: 2rem;
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+          max-width: 500px;
+        ">
+          <h1 style="color: #1e293b; margin-bottom: 1rem;">JavaScript requis</h1>
+          <p style="color: #64748b; line-height: 1.6;">
+            Cette application nécessite JavaScript pour fonctionner. 
+            Veuillez activer JavaScript dans votre navigateur et recharger la page.
+          </p>
+        </div>
+      </div>
+    </noscript>
+    
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

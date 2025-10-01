@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react'
-import { useSearchParams, useParams } from 'react-router-dom'
+import { useSearchParams, useParams, Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@/components/ui/button'
@@ -15,7 +15,6 @@ import { useQuery } from '@tanstack/react-query'
 import { companiesApi } from '@/api/companies'
 import { LoadingSpinner } from '@/components/Spinner'
 
-
 function EmployeeActions({ employee }) {
   const [isEditOpen, setIsEditOpen] = useState(false)
   const mutations = useEmployeeMutations()
@@ -23,6 +22,11 @@ function EmployeeActions({ employee }) {
 
   return (
     <div className="flex space-x-2">
+      <Link to={`/employees/${employee.id}`}>
+        <Button variant="outline" size="sm">
+          Voir détails
+        </Button>
+      </Link>
       <Button
         variant="outline"
         size="sm"
@@ -231,11 +235,11 @@ export default function Employees() {
   }
 
   const { data, isLoading, error } = useEmployees(page, limit, filters)
-  console.log('isLoading:', isLoading);
-  console.log('data:', data);
-  console.log('error:', error);
-  console.log('data?.data:', data?.data);
-  console.log('data?.data length:', data?.length);
+  console.log('isLoading:', isLoading)
+  console.log('data:', data)
+  console.log('error:', error)
+  console.log('data?.data:', data?.data)
+  console.log('data?.data length:', data?.length)
   const employees = data?.data?.data || []
   const meta = data?.data?.meta || {}
   console.log('Debug - data:', data)
@@ -245,7 +249,7 @@ export default function Employees() {
   const { data: companyData } = useQuery({
     queryKey: ['company', companyId],
     queryFn: () => companiesApi.getById(companyId),
-    enabled: !!companyId
+    enabled: !!companyId,
   })
 
   const handleExportCSV = () => exportEmployeesToCSV(employees)
@@ -303,7 +307,7 @@ export default function Employees() {
           <Button variant="outline" onClick={handleExportCSV}>
             Exporter CSV
           </Button>
-          <Button onClick={() => setIsCreateOpen(true)}>
+          <Button onClick={() => setIsCreateOpen(true) }>
             Ajouter un employé
           </Button>
         </div>
@@ -353,8 +357,17 @@ export default function Employees() {
               employees.map((employee) => (
                 <Card key={employee.id} className="hover-lift interactive-card">
                   <CardHeader>
-                    <CardTitle className="text-lg">{employee.fullName}</CardTitle>
-                    <CardDescription>{employee.position}</CardDescription>
+                    <div className="flex items-center space-x-4">
+                      <img
+                        src={`https://ui-avatars.com/api/?name=${encodeURIComponent(employee.fullName)}&background=random&color=fff`}
+                        alt={employee.fullName}
+                        className="w-12 h-12 rounded-full"
+                      />
+                      <div>
+                        <CardTitle className="text-lg">{employee.fullName}</CardTitle>
+                        <CardDescription>{employee.position}</CardDescription>
+                      </div>
+                    </div>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2">
@@ -436,7 +449,7 @@ export default function Employees() {
                     ) : (
                       <Button
                         key={index}
-                        variant={page === pageNum ? "default" : "outline"}
+                        variant={page === pageNum ? 'default' : 'outline'}
                         size="sm"
                         onClick={() => handlePageChange(pageNum)}
                         className="w-8 h-8 p-0"

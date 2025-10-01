@@ -285,6 +285,8 @@ export default function Payslips() {
     onGlobalFilterChange: setGlobalFilter,
   })
 
+  console.log(table)
+  
   if (isLoading) return <LoadingSpinner />
 
   return (
