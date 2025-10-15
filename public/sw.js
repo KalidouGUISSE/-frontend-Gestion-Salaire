@@ -1,4 +1,5 @@
 // Service Worker pour l'application Gestion des Salaires
+/* eslint-disable no-undef */
 const CACHE_NAME = 'gestion-salaires-v1.0.0'
 const STATIC_CACHE = 'static-v1'
 const DYNAMIC_CACHE = 'dynamic-v1'
@@ -18,7 +19,7 @@ const NEVER_CACHE = [
   '/auth/',
   'chrome-extension://',
   'moz-extension://',
-  'safari-extension://'
+  'safari-extension://',
 ]
 
 // Installation du Service Worker
@@ -37,7 +38,7 @@ self.addEventListener('install', (event) => {
       })
       .catch((error) => {
         console.error('❌ Service Worker: Erreur lors de l\'installation:', error)
-      })
+      }),
   )
 })
 
@@ -54,7 +55,7 @@ self.addEventListener('activate', (event) => {
               console.log('🗑️ Service Worker: Suppression du cache obsolète:', cacheName)
               return caches.delete(cacheName)
             }
-          })
+          }),
         )
       })
       .then(() => {
@@ -63,14 +64,13 @@ self.addEventListener('activate', (event) => {
       })
       .catch((error) => {
         console.error('❌ Service Worker: Erreur lors de l\'activation:', error)
-      })
+      }),
   )
 })
 
 // Interception des requêtes
 self.addEventListener('fetch', (event) => {
   const { request } = event
-  const url = new URL(request.url)
 
   // Ignorer les requêtes non-HTTP
   if (!request.url.startsWith('http')) {
@@ -109,7 +109,7 @@ async function networkFirstStrategy(request) {
     }
     
     return networkResponse
-  } catch (error) {
+  } catch {
     console.log('🌐 Service Worker: Réseau indisponible, tentative de récupération depuis le cache')
     const cachedResponse = await caches.match(request)
     
@@ -121,13 +121,13 @@ async function networkFirstStrategy(request) {
     return new Response(
       JSON.stringify({ 
         error: 'Connexion réseau indisponible',
-        message: 'Veuillez vérifier votre connexion internet'
+        message: 'Veuillez vérifier votre connexion internet',
       }),
       {
         status: 503,
         statusText: 'Service Unavailable',
-        headers: { 'Content-Type': 'application/json' }
-      }
+        headers: { 'Content-Type': 'application/json' },
+      },
     )
   }
 }
@@ -191,7 +191,7 @@ self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'CLEAR_CACHE') {
     caches.keys().then((cacheNames) => {
       return Promise.all(
-        cacheNames.map((cacheName) => caches.delete(cacheName))
+        cacheNames.map((cacheName) => caches.delete(cacheName)),
       )
     }).then(() => {
       event.ports[0].postMessage({ success: true })
@@ -210,11 +210,11 @@ self.addEventListener('push', (event) => {
     badge: '/icons/badge-72x72.png',
     vibrate: [100, 50, 100],
     data: data.data,
-    actions: data.actions || []
+    actions: data.actions || [],
   }
   
   event.waitUntil(
-    self.registration.showNotification(data.title, options)
+    self.registration.showNotification(data.title, options),
   )
 })
 
@@ -238,7 +238,7 @@ self.addEventListener('notificationclick', (event) => {
           if (clients.openWindow) {
             return clients.openWindow('/')
           }
-        })
+        }),
     )
   }
 })

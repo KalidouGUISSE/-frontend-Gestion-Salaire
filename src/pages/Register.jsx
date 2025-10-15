@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -10,18 +10,20 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { authApi } from '@/api/auth'
 
-import { ErrorHandler } from "@/utils/ErrorHandler";
+import { ErrorHandler } from '@/utils/ErrorHandler'
 
 const registerSchema = z.object({
   fullName: z.string().min(3, 'Le nom complet doit contenir au moins 3 caractères'),
   email: z.string().email('Email invalide'),
   password: z.string().min(6, 'Mot de passe doit contenir au moins 6 caractères'),
-  role: z.enum(["SUPER_ADMIN", "ADMIN", "CASHIER", "EMPLOYEE"]).optional().default("ADMIN"),
+  role: z.enum(['SUPER_ADMIN', 'ADMIN', 'CASHIER', 'EMPLOYEE']).optional().default('ADMIN'),
   companyId: z.string().optional(), // string pour input, convertir en number si présent
 })
 
 export default function Register() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const companyIdFromUrl = searchParams.get('companyId')
 
   const form = useForm({
     resolver: zodResolver(registerSchema),
@@ -30,7 +32,7 @@ export default function Register() {
       email: '',
       password: '',
       role: 'ADMIN',
-      companyId: '',
+      companyId: companyIdFromUrl || '',
     },
   })
 
@@ -44,11 +46,11 @@ export default function Register() {
       return authApi.register(payload)
     },
     onSuccess: () => {
-      navigate('/login') // Rediriger vers login après inscription
+      navigate('/super-admin-dashboard') // Rediriger vers login après inscription
     },
     onError: (error) => {
-      const message = ErrorHandler.getMessage(error);
-      form.setError('root', { message });
+      const message = ErrorHandler.getMessage(error)
+      form.setError('root', { message })
     },
   })
 
@@ -172,9 +174,9 @@ export default function Register() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="SUPER_ADMIN">USER</SelectItem>
-                        <SelectItem value="ADMIN">Admin</SelectItem>
-                        <SelectItem value="CASHIER">MANAGER</SelectItem>
+                        <SelectItem value="SUPER_ADMIN">EMPLOYEE</SelectItem>
+                        <SelectItem value="ADMIN">ADMIN</SelectItem>
+                        <SelectItem value="CASHIER">CASHIER</SelectItem>
                         {/* <SelectItem value="EMPLOYEE">Employé</SelectItem> */}
                       </SelectContent>
                     </Select>
@@ -182,31 +184,33 @@ export default function Register() {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="companyId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm font-semibold text-foreground">ID Entreprise (optionnel)</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Input
-                          type="number"
-                          placeholder="ID de l'entreprise"
-                          className="input-modern h-12 pl-12 pr-4 bg-white/50 border-white/30 focus:bg-white focus:border-primary"
-                          {...field}
-                        />
-                        <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-                          <svg className="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                          </svg>
+              {!companyIdFromUrl && (
+                <FormField
+                  control={form.control}
+                  name="companyId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-semibold text-foreground">ID Entreprise (optionnel)</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Input
+                            type="number"
+                            placeholder="ID de l'entreprise"
+                            className="input-modern h-12 pl-12 pr-4 bg-white/50 border-white/30 focus:bg-white focus:border-primary"
+                            {...field}
+                          />
+                          <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
+                            <svg className="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                            </svg>
+                          </div>
                         </div>
-                      </div>
-                    </FormControl>
-                    <FormMessage className="text-destructive text-sm" />
-                  </FormItem>
-                )}
-              />
+                      </FormControl>
+                      <FormMessage className="text-destructive text-sm" />
+                    </FormItem>
+                  )}
+                />
+              )}
               {form.formState.errors.root && (
                 <div className="bg-destructive/10 border border-destructive/20 rounded-2xl p-4">
                   <div className="flex items-center">
@@ -243,9 +247,9 @@ export default function Register() {
                   type="button"
                   variant="link"
                   className="text-primary hover:text-primary-hover font-semibold transition-modern"
-                  onClick={() => navigate('/login')}
+                  onClick={() => navigate('/companies')}
                 >
-                  Déjà un compte ? Se connecter
+                  Retour
                 </Button>
               </div>
             </form>

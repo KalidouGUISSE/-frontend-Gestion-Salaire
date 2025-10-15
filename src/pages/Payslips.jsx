@@ -18,6 +18,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Download, FileText } from 'lucide-react'
 import { payslipsApi } from '@/api/payslips'
 import Papa from 'papaparse'
 import { LoadingSpinner } from '@/components/Spinner'
@@ -33,9 +34,9 @@ const columns = [
     header: 'Employé',
   },
   {
-    accessorKey: 'payrun.periodIdentifier',
+    accessorKey: 'employee.contractType',
     header: 'Cycle',
-    cell: ({ row }) => row.original.payrun?.periodIdentifier || `${row.original.payrun?.periodStart} - ${row.original.payrun?.periodEnd}`,
+    cell: ({ row }) => row.original.employee?.contractType || 'N/A',
   },
   {
     accessorKey: 'gross',
@@ -50,7 +51,22 @@ const columns = [
   {
     accessorKey: 'net',
     header: 'Net',
-    cell: ({ getValue }) => `${getValue()} FCFA`,
+    cell: ({ row }) => {
+      const payslip = row.original
+      const gross = payslip.gross
+      const contractType = payslip.employee?.contractType
+      let net
+      if (contractType === 'JOURNALIER') {
+        net = gross * 0.95
+      } else if (contractType === 'HONORAIRE') {
+        net = gross * 0.9
+      } else if (contractType === 'FIXE') {
+        net = gross * 0.85
+      } else {
+        net = payslip.net
+      }
+      return `${net.toFixed(2)} FCFA`
+    },
   },
   {
     accessorKey: 'status',
@@ -103,8 +119,10 @@ function PayslipActions({ payslip }) {
         size="sm"
         onClick={() => exportMutation.mutate()}
         disabled={exportMutation.isPending}
+        className="bg-red-50 hover:bg-red-100 border-red-200 text-red-700 hover:text-red-800"
       >
-        Exporter PDF
+        <Download className="w-4 h-4 mr-2" />
+        {exportMutation.isPending ? 'Export...' : 'PDF'}
       </Button>
       <PayslipViewDialog
         payslip={payslip}
@@ -135,7 +153,7 @@ function PayslipViewDialog({ payslip, open, onOpenChange }) {
             <strong>Employé:</strong> {payslip.employee?.fullName}
           </div>
           <div>
-            <strong>Cycle:</strong> {payslip.payrun?.periodIdentifier || `${payslip.payrun?.periodStart} - ${payslip.payrun?.periodEnd}`}
+            <strong>Cycle:</strong> {payslip.employee?.contractType || 'N/A'}
           </div>
           <div>
             <strong>Salaire brut:</strong> {payslip.gross} FCFA
@@ -144,7 +162,15 @@ function PayslipViewDialog({ payslip, open, onOpenChange }) {
             <strong>Déductions:</strong> {payslip.deductions} FCFA
           </div>
           <div>
-            <strong>Salaire net:</strong> {payslip.net} FCFA
+            <strong>Salaire net:</strong> {
+              payslip.employee?.contractType === 'JOURNALIER'
+                ? (payslip.gross * 0.95).toFixed(2)
+                : payslip.employee?.contractType === 'HONORAIRE'
+                ? (payslip.gross * 0.9).toFixed(2)
+                : payslip.employee?.contractType === 'FIXE'
+                ? (payslip.gross * 0.85).toFixed(2)
+                : payslip.net
+            } FCFA
           </div>
           <div>
             <strong>Statut:</strong> {payslip.status}
@@ -254,14 +280,28 @@ export default function Payslips() {
 
   const exportToCSV = () => {
     if (!data?.data) return
-    const csv = Papa.unparse(data.data.map(payslip => ({
-      'Employé': payslip.employee?.fullName,
-      'Cycle': payslip.payrun?.periodIdentifier || `${payslip.payrun?.periodStart} - ${payslip.payrun?.periodEnd}`,
-      'Brut': payslip.gross,
-      'Déductions': payslip.deductions,
-      'Net': payslip.net,
-      'Statut': payslip.status,
-    })))
+    const csv = Papa.unparse(data.data.map(payslip => {
+      const gross = payslip.gross
+      const contractType = payslip.employee?.contractType
+      let net
+      if (contractType === 'JOURNALIER') {
+        net = gross * 0.95
+      } else if (contractType === 'HONORAIRE') {
+        net = gross * 0.9
+      } else if (contractType === 'FIXE') {
+        net = gross * 0.85
+      } else {
+        net = payslip.net
+      }
+      return {
+        'Employé': payslip.employee?.fullName,
+        'Cycle': contractType || 'N/A',
+        'Brut': gross,
+        'Déductions': payslip.deductions,
+        'Net': net.toFixed(2),
+        'Statut': payslip.status,
+      }
+    }))
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
     const url = window.URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -305,8 +345,10 @@ export default function Payslips() {
           <Button
             onClick={() => batchExportMutation.mutate()}
             disabled={batchExportMutation.isPending}
+            className="bg-red-600 hover:bg-red-700 text-white"
           >
-            Exporter tous en PDF
+            <FileText className="w-4 h-4 mr-2" />
+            {batchExportMutation.isPending ? 'Export...' : 'Exporter tous en PDF'}
           </Button>
         </div>
       </div>
@@ -338,7 +380,7 @@ export default function Payslips() {
                           ? null
                           : flexRender(
                               header.column.columnDef.header,
-                              header.getContext()
+                              header.getContext(),
                             )}
                       </TableHead>
                     ))}
@@ -350,13 +392,13 @@ export default function Payslips() {
                   table.getRowModel().rows.map((row) => (
                     <TableRow
                       key={row.id}
-                      data-state={row.getIsSelected() && "selected"}
+                      data-state={row.getIsSelected() && 'selected'}
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
                           {flexRender(
                             cell.column.columnDef.cell,
-                            cell.getContext()
+                            cell.getContext(),
                           )}
                         </TableCell>
                       ))}

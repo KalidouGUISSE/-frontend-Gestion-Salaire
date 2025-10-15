@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { employeeSchema } from '@/validators/employeeValidator'
 import { useEmployeeMutations } from '@/features/employees/hooks/useEmployees'
 
-
 export function CreateEmployeeDialog({ open, onOpenChange }) {
   const mutations = useEmployeeMutations()
   const { create } = mutations

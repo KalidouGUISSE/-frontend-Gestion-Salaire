@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { useState } from 'react'
 import { cn } from '@/lib/utils'
 
@@ -6,7 +7,7 @@ export default function Spinner({ size = 'md', className = '' }) {
     sm: 'w-4 h-4',
     md: 'w-8 h-8',
     lg: 'w-12 h-12',
-    xl: 'w-16 h-16'
+    xl: 'w-16 h-16',
   }
 
   return (
@@ -20,7 +21,7 @@ export default function Spinner({ size = 'md', className = '' }) {
 }
 
 // Modern Loading component with enhanced design
-export function LoadingSpinner({ text = 'Chargement...', size = 'md', className = '' }) {
+export function LoadingSpinner({ text = 'Chargement...', size: _size = 'md', className = '' }) {
   return (
     <div className={`flex flex-col items-center justify-center min-h-[400px] ${className}`}>
       <div className="relative mb-6">
@@ -124,7 +125,7 @@ export function LoadingOverlay({ isVisible, message = 'Chargement...', className
   return (
     <div className={cn(
       'fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center',
-      className
+      className,
     )}>
       <div className="glass-premium rounded-3xl p-8 shadow-floating border border-white/20 text-center">
         <Spinner size="xl" className="mx-auto mb-4" />
@@ -158,6 +159,6 @@ export function useLoadingState(initialState = false) {
     error,
     startLoading,
     stopLoading,
-    setLoadingError
+    setLoadingError,
   }
 }

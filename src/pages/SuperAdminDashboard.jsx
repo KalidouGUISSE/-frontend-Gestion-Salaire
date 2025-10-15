@@ -5,7 +5,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 const mockKPIs = {
   totalCompanies: 25,
   totalUsers: 150,
-  totalActiveEmployees: 1200
+  totalActiveEmployees: 1200,
 }
 
 const mockChartData = [
@@ -20,7 +20,7 @@ const mockChartData = [
   { month: 'Sep', companies: 6 },
   { month: 'Oct', companies: 10 },
   { month: 'Nov', companies: 8 },
-  { month: 'Déc', companies: 12 }
+  { month: 'Déc', companies: 12 },
 ]
 
 const mockRecentCompanies = [
@@ -28,7 +28,7 @@ const mockRecentCompanies = [
   { id: 2, name: 'FinancePlus', address: 'Lyon', currency: 'EUR', periodType: 'Mensuel', createdAt: '2024-01-12' },
   { id: 3, name: 'LogisticsPro', address: 'Marseille', currency: 'EUR', periodType: 'Mensuel', createdAt: '2024-01-10' },
   { id: 4, name: 'RetailHub', address: 'Toulouse', currency: 'EUR', periodType: 'Mensuel', createdAt: '2024-01-08' },
-  { id: 5, name: 'ConsultingGroup', address: 'Nice', currency: 'EUR', periodType: 'Mensuel', createdAt: '2024-01-05' }
+  { id: 5, name: 'ConsultingGroup', address: 'Nice', currency: 'EUR', periodType: 'Mensuel', createdAt: '2024-01-05' },
 ]
 
 export default function SuperAdminDashboard() {

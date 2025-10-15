@@ -2,7 +2,7 @@
 export const appConfig = {
   // API Configuration
   api: {
-    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
+    baseURL: import.meta.env.VITE_API_URL || '',
     timeout: parseInt(import.meta.env.VITE_API_TIMEOUT) || 10000,
     retryAttempts: 3,
     retryDelay: 1000,

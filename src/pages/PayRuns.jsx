@@ -141,8 +141,7 @@ function PayRunDetailDialog({ payrun, open, onOpenChange }) {
     enabled: open,
   })
 
-  console.log(payslips?.data?.data);
-  
+  console.log(payslips?.data?.data)
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -160,6 +159,7 @@ function PayRunDetailDialog({ payrun, open, onOpenChange }) {
             <h3 className="text-lg font-semibold mb-4">Bulletins de paie</h3>
             {payslips?.data?.data?.length ? (
               <Table>
+                {console.log('payslips',payslips)}
                 <TableHeader>
                   <TableRow>
                     <TableHead>Employé</TableHead>
@@ -175,7 +175,15 @@ function PayRunDetailDialog({ payrun, open, onOpenChange }) {
                       <TableCell>{payslip.employee.fullName}</TableCell>
                       <TableCell>{payslip.gross} FCFA</TableCell>
                       <TableCell>{payslip.deductions} FCFA</TableCell>
-                      <TableCell>{payslip.net} FCFA</TableCell>
+                      <TableCell>
+                        {payslip.employee?.contractType === 'JOURNALIER'
+                          ? (payslip.gross * 0.95).toFixed(2)
+                          : payslip.employee?.contractType === 'HONORAIRE'
+                          ? (payslip.gross * 0.9).toFixed(2)
+                          : payslip.employee?.contractType === 'FIXE'
+                          ? (payslip.gross * 0.85).toFixed(2)
+                          : payslip.net} FCFA
+                      </TableCell>
                       <TableCell>{payslip.status}</TableCell>
                     </TableRow>
                   ))}
@@ -257,7 +265,7 @@ export default function PayRuns() {
                           ? null
                           : flexRender(
                               header.column.columnDef.header,
-                              header.getContext()
+                              header.getContext(),
                             )}
                       </TableHead>
                     ))}
@@ -269,13 +277,13 @@ export default function PayRuns() {
                   table.getRowModel().rows.map((row) => (
                     <TableRow
                       key={row.id}
-                      data-state={row.getIsSelected() && "selected"}
+                      data-state={row.getIsSelected() && 'selected'}
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
                           {flexRender(
                             cell.column.columnDef.cell,
-                            cell.getContext()
+                            cell.getContext(),
                           )}
                         </TableCell>
                       ))}

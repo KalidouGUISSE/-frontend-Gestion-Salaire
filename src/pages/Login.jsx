@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { authApi } from '@/api/auth'
 import useAuthStore from '@/store/auth'
-import { ErrorHandler } from "@/utils/ErrorHandler";
+import { ErrorHandler } from '@/utils/ErrorHandler'
 
 const loginSchema = z.object({
   email: z.string().email('Email invalide'),
@@ -32,7 +32,7 @@ export default function Login() {
     onSuccess: (data) => {
       login(data.user, data.accessToken)
       localStorage.setItem('auth-token', data.accessToken)
-      console.log('data.token',data.accessToken);
+      console.log('data.token',data.accessToken)
 
       // Redirect based on role
       if (data.user.role === 'SUPER_ADMIN') {
@@ -42,8 +42,8 @@ export default function Login() {
       }
     },
     onError: (error) => {
-      const message = ErrorHandler.getMessage(error);
-      form.setError('root', { message });
+      const message = ErrorHandler.getMessage(error)
+      form.setError('root', { message })
     },
   })
 

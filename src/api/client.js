@@ -41,7 +41,7 @@ class ApiClient {
           console.error('❌ Request Error:', error)
         }
         return Promise.reject(error)
-      }
+      },
     )
 
     // Response interceptor
@@ -81,7 +81,7 @@ class ApiClient {
         }
 
         return Promise.reject(this.formatError(error))
-      }
+      },
     )
   }
 
@@ -134,7 +134,7 @@ class ApiClient {
   }
 
   get(endpoint, options = {}) {    
-    console.log('je  suit la endpoint',endpoint);
+    console.log('je  suit la endpoint',endpoint)
 
     return this.request(endpoint, { ...options, method: 'GET' })
   }
@@ -163,7 +163,7 @@ class ApiClient {
   }
 
   patch(endpoint, data, options = {}) {
-    console.log('bbbbbbbbbb');
+    console.log('bbbbbbbbbb')
     
     return this.request(endpoint, {
       ...options,

@@ -282,7 +282,7 @@ export default function Dashboard() {
                       {new Date(payment.dueDate).toLocaleDateString('fr-FR', {
                         day: '2-digit',
                         month: '2-digit',
-                        year: 'numeric'
+                        year: 'numeric',
                       })}
                     </div>
                     <div className={`text-xs px-2 py-1 rounded-full ${

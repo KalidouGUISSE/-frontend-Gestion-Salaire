@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
-import { ArrowLeft, Mail, Phone, Calendar, DollarSign, FileText, CreditCard } from 'lucide-react'
+import { ArrowLeft, Mail, Phone, Calendar, DollarSign, FileText, CreditCard, QrCode } from 'lucide-react'
 import { employeesApi } from '@/api/employees'
 import { payslipsApi } from '@/api/payslips'
 import { paymentsApi } from '@/api/payments'
@@ -27,14 +27,24 @@ const salaryPaymentSchema = z.object({
 
 export default function EmployeeDetails() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('overview')
   const [isPaymentOpen, setIsPaymentOpen] = useState(false)
+  const [hasImageError, setHasImageError] = useState(false)
 
   const { data: employee, isLoading: employeeLoading } = useQuery({
     queryKey: ['employee', id],
     queryFn: () => employeesApi.getById(id),
     enabled: !!id,
   })
+
+  const emp = employee?.data
+
+  useEffect(() => {
+    if (emp?.photos) {
+      setHasImageError(false)
+    }
+  }, [emp?.photos])
 
   const { data: payslips, isLoading: payslipsLoading } = useQuery({
     queryKey: ['employee-payslips', id],
@@ -50,7 +60,7 @@ export default function EmployeeDetails() {
 
   if (employeeLoading) return <LoadingSpinner />
 
-  if (!employee?.data) {
+  if (!emp) {
     return (
       <div className="text-center py-8">
         <p className="text-gray-500">Employé non trouvé.</p>
@@ -61,19 +71,15 @@ export default function EmployeeDetails() {
     )
   }
 
-  const emp = employee.data
-
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <Link to="/employees">
-            <Button variant="outline" size="sm">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Retour
-            </Button>
-          </Link>
+          <Button variant="outline" size="sm" onClick={() => navigate(-1)}>
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Retour
+          </Button>
           <div>
             <h1 className="text-3xl font-bold text-gray-900">{emp.fullName}</h1>
             <p className="text-gray-600">{emp.position}</p>
@@ -91,10 +97,14 @@ export default function EmployeeDetails() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview">Aperçu</TabsTrigger>
           <TabsTrigger value="payslips">Bulletins</TabsTrigger>
           <TabsTrigger value="payments">Paiements</TabsTrigger>
+          <TabsTrigger value="qr" className="flex items-center gap-2">
+            <QrCode className="w-4 h-4" />
+            QR Code
+          </TabsTrigger>
           <TabsTrigger value="salary">Salaire</TabsTrigger>
         </TabsList>
 
@@ -105,9 +115,10 @@ export default function EmployeeDetails() {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <img
-                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(emp.fullName)}&background=random&color=fff`}
+                    src={hasImageError ? '/image.png' : (emp.photos ? `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/${emp.photos.replace(/^\/+/, '')}` : '/image.png')}
                     alt={emp.fullName}
-                    className="w-10 h-10 rounded-full mr-3"
+                    className="w-10 h-10 rounded-full mr-3 object-cover"
+                    onError={() => setHasImageError(true)}
                   />
                   Informations personnelles
                 </CardTitle>
@@ -170,6 +181,10 @@ export default function EmployeeDetails() {
                   <p className="text-2xl font-bold">
                     {payments?.data?.reduce((sum, payment) => sum + payment.amount, 0) || 0} FCFA
                   </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Nombre de pointages</p>
+                  <p className="text-2xl font-bold">{emp.attendanceCount || 0}</p>
                 </div>
               </CardContent>
             </Card>
@@ -254,6 +269,52 @@ export default function EmployeeDetails() {
           </Card>
         </TabsContent>
 
+        <TabsContent value="qr" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Code QR de validation</CardTitle>
+              <CardDescription>
+                Ce code QR permet de valider l'identité de l'employé lors des paiements
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {emp.profile ? (
+                <div className="flex flex-col items-center space-y-4">
+                  <div className="border-2 border-gray-200 rounded-lg p-4">
+                    <img
+                      src={`http://localhost:3000/${emp.profile.qrCodePath}`}
+                      alt="QR Code"
+                      className="w-48 h-48"
+                      onError={(e) => {
+                        console.error('Failed to load QR code:', emp.profile.qrCodePath)
+                        e.target.style.display = 'none'
+                      }}
+                    />
+                    <p className="text-xs text-gray-500 mt-2">Chemin: {emp.profile.qrCodePath}</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm text-gray-600 mb-2">Token QR:</p>
+                    <code className="bg-gray-100 px-3 py-1 rounded text-sm font-mono">
+                      {emp.profile.qrToken}
+                    </code>
+                  </div>
+                  <div className="text-center text-sm text-gray-500">
+                    <p>Présentez ce QR code lors de vos paiements pour valider votre identité.</p>
+                    <p>Le scanner lira automatiquement le code et confirmera votre identité.</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-gray-500">Aucun profil QR trouvé pour cet employé.</p>
+                  <p className="text-sm text-gray-400 mt-2">
+                    Le profil QR est créé automatiquement lors de l'inscription.
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         <TabsContent value="salary" className="space-y-6">
           <Card>
             <CardHeader>
@@ -317,6 +378,17 @@ function SalaryPaymentDialog({ open, onOpenChange, employeeId, payslips }) {
     },
   })
 
+  const watchedPayslipId = form.watch('payslipId')
+
+  useEffect(() => {
+    if (watchedPayslipId && payslips.length > 0) {
+      const selectedPayslip = payslips.find(p => p.id === Number(watchedPayslipId))
+      if (selectedPayslip) {
+        form.setValue('amount', selectedPayslip.net)
+      }
+    }
+  }, [watchedPayslipId, payslips, form])
+
   const createMutation = useMutation({
     mutationFn: paymentsApi.create,
     onSuccess: () => {
@@ -377,6 +449,7 @@ function SalaryPaymentDialog({ open, onOpenChange, employeeId, payslips }) {
                       type="number"
                       step="0.01"
                       {...field}
+                      disabled
                       onChange={(e) => field.onChange(Number(e.target.value))}
                     />
                   </FormControl>

@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Plus, Eye, Edit, Trash2 } from 'lucide-react'
+import { Plus, Eye, Edit, Trash2, UserPlus } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useCompanies, useCompanyMutations } from '@/features/companies/hooks/useCompanies'
 
@@ -23,7 +23,7 @@ export default function Companies() {
     address: '',
     currency: 'EUR',
     periodType: 'Mensuel',
-    logo: ''
+    logo: '',
   })
 
   const handleCreate = () => {
@@ -33,7 +33,7 @@ export default function Companies() {
       address: '',
       currency: 'EUR',
       periodType: 'Mensuel',
-      logo: ''
+      logo: '',
     })
     setIsDialogOpen(true)
   }
@@ -45,7 +45,7 @@ export default function Companies() {
       address: company.address,
       currency: company.currency,
       periodType: company.payPeriodType === 'MONTHLY' ? 'Mensuel' : company.payPeriodType === 'WEEKLY' ? 'Hebdomadaire' : 'Journalier',
-      logo: company.logo || ''
+      logo: company.logo || '',
     })
     setIsDialogOpen(true)
   }
@@ -77,7 +77,7 @@ export default function Companies() {
           onSuccess: () => {
             setIsDialogOpen(false)
           },
-        }
+        },
       )
     } else {
       create.mutate(apiData, {
@@ -156,6 +156,13 @@ export default function Companies() {
                         onClick={() => handleView(company)}
                       >
                         <Eye className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigate(`/register?companyId=${company.id}`)}
+                      >
+                        <UserPlus className="w-4 h-4" />
                       </Button>
                       <Button
                         variant="outline"

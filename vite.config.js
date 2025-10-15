@@ -3,14 +3,14 @@ import react from '@vitejs/plugin-react'
 import { fileURLToPath, URL } from 'node:url'
 
 // https://vite.dev/config/
-export default defineConfig(({ command, mode }) => {
+export default defineConfig(({ mode }) => {
   const isProduction = mode === 'production'
   
   return {
     plugins: [react()],
     resolve: {
       alias: {
-        "@": fileURLToPath(new URL('./src', import.meta.url)),
+        '@': fileURLToPath(new URL('./src', import.meta.url)),
       },
     },
     
@@ -33,7 +33,7 @@ export default defineConfig(({ command, mode }) => {
       target: 'esnext',
       outDir: 'dist',
       assetsDir: 'assets',
-      sourcemap: !isProduction,
+      sourcemap: isProduction,
       minify: isProduction ? 'esbuild' : false,
       
       // Optimisation des chunks
@@ -68,8 +68,8 @@ export default defineConfig(({ command, mode }) => {
               return `css/[name]-[hash].${ext}`
             }
             return `assets/[name]-[hash].${ext}`
-          }
-        }
+          },
+        },
       },
       
       // Optimisation de la taille
@@ -86,7 +86,7 @@ export default defineConfig(({ command, mode }) => {
         'react-hook-form',
         'zod',
         'axios',
-        'zustand'
+        'zustand',
       ],
     },
     
@@ -101,7 +101,7 @@ export default defineConfig(({ command, mode }) => {
     
     // Configuration CSS
     css: {
-      devSourcemap: !isProduction,
+      devSourcemap: isProduction,
       postcss: './postcss.config.js',
     },
     
@@ -109,6 +109,6 @@ export default defineConfig(({ command, mode }) => {
     preview: {
       port: 4173,
       host: true,
-    }
+    },
   }
 })

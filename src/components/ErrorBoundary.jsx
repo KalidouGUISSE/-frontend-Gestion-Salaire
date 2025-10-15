@@ -10,15 +10,15 @@ class ErrorBoundary extends Component {
       hasError: false, 
       error: null, 
       errorInfo: null,
-      errorId: null
+      errorId: null,
     }
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError(_error) {
     // Update state so the next render will show the fallback UI
     return { 
       hasError: true,
-      errorId: `error_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      errorId: `error_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     }
   }
 
@@ -26,7 +26,7 @@ class ErrorBoundary extends Component {
     // Log error details
     this.setState({
       error,
-      errorInfo
+      errorInfo,
     })
 
     // Log to console in development
@@ -53,14 +53,14 @@ class ErrorBoundary extends Component {
         url: window.location.href,
         userId: localStorage.getItem('user-id') || 'anonymous',
         errorId: this.state.errorId,
-        appVersion: appConfig.app.version
+        appVersion: appConfig.app.version,
       }
 
       // Example: Send to your logging endpoint
       fetch('/api/errors', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(errorData)
+        body: JSON.stringify(errorData),
       }).catch(err => console.error('Failed to log error:', err))
       
     } catch (loggingError) {

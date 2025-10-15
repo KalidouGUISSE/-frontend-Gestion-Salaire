@@ -16,6 +16,7 @@ import PayRuns from './pages/PayRuns'
 import Payslips from './pages/Payslips'
 import Payments from './pages/Payments'
 import Documents from './pages/Documents'
+import Kiosk from './pages/Kiosk'
 import useAuthStore from './store/auth'
 import { validateConfig } from './config/app'
 
@@ -53,6 +54,7 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/kiosk" element={<Kiosk />} />
             <Route
               path="/"
               element={
@@ -71,14 +73,14 @@ function App() {
                   <Employees />
                 </RoleBasedRoute>
               } />
+              <Route path="employees/company/:companyId" element={
+                <RoleBasedRoute allowedRoles={['ADMIN', 'SUPER_ADMIN']}>
+                  <Employees />
+                </RoleBasedRoute>
+              } />
               <Route path="employees/:id" element={
                 <RoleBasedRoute allowedRoles={['ADMIN', 'SUPER_ADMIN', 'CASHIER']}>
                   <EmployeeDetails />
-                </RoleBasedRoute>
-              } />
-              <Route path="/employees/company/:companyId" element={
-                <RoleBasedRoute allowedRoles={['ADMIN', 'SUPER_ADMIN']}>
-                  <Employees />
                 </RoleBasedRoute>
               } />
               <Route path="payruns" element={

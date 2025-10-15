@@ -124,7 +124,7 @@ export function usePWA() {
             
             registration.active.postMessage(
               { type: 'CLEAR_CACHE' },
-              [messageChannel.port2]
+              [messageChannel.port2],
             )
           })
         }
@@ -134,7 +134,7 @@ export function usePWA() {
       if ('caches' in window) {
         const cacheNames = await caches.keys()
         await Promise.all(
-          cacheNames.map(cacheName => caches.delete(cacheName))
+          cacheNames.map(cacheName => caches.delete(cacheName)),
         )
         return true
       }
@@ -160,13 +160,13 @@ export function usePWA() {
                 isOnline,
                 isInstalled,
                 isInstallable,
-                updateAvailable
+                updateAvailable,
               })
             }
             
             registration.active.postMessage(
               { type: 'GET_VERSION' },
-              [messageChannel.port2]
+              [messageChannel.port2],
             )
           })
         }
@@ -177,7 +177,7 @@ export function usePWA() {
         isOnline,
         isInstalled,
         isInstallable,
-        updateAvailable
+        updateAvailable,
       }
     } catch (error) {
       console.error('Erreur lors de la récupération des informations:', error)
@@ -201,6 +201,6 @@ export function usePWA() {
     // Utilitaires
     canInstall: isInstallable && !isInstalled,
     needsUpdate: updateAvailable,
-    isOffline: !isOnline
+    isOffline: !isOnline,
   }
 }

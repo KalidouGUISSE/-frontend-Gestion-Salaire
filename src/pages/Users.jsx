@@ -7,31 +7,23 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Plus, Edit, Trash2, UserCheck, UserX } from 'lucide-react'
-
-// Mock data
-const mockCompanies = [
-  { id: 1, name: 'TechCorp' },
-  { id: 2, name: 'FinancePlus' },
-  { id: 3, name: 'LogisticsPro' }
-]
-
-const mockUsers = [
-  { id: 1, fullName: 'Jean Dupont', email: 'jean.dupont@techcorp.com', role: 'Admin', companyId: 1, companyName: 'TechCorp', isActive: true, createdAt: '2024-01-15' },
-  { id: 2, fullName: 'Marie Martin', email: 'marie.martin@financeplus.com', role: 'Caissier', companyId: 2, companyName: 'FinancePlus', isActive: true, createdAt: '2024-01-12' },
-  { id: 3, fullName: 'Pierre Durand', email: 'pierre.durand@logisticspro.com', role: 'Admin', companyId: 3, companyName: 'LogisticsPro', isActive: false, createdAt: '2024-01-10' },
-  { id: 4, fullName: 'Sophie Leroy', email: 'sophie.leroy@techcorp.com', role: 'Caissier', companyId: 1, companyName: 'TechCorp', isActive: true, createdAt: '2024-01-08' },
-  { id: 5, fullName: 'Michel Bernard', email: 'michel.bernard@financeplus.com', role: 'Admin', companyId: 2, companyName: 'FinancePlus', isActive: true, createdAt: '2024-01-05' }
-]
+import { useUsers, useUserMutations } from '@/features/users/hooks/useUsers'
+import { useCompanies } from '@/features/companies/hooks/useCompanies'
 
 export default function Users() {
-  const [users, setUsers] = useState(mockUsers)
+  const { data: usersData } = useUsers(1, 1000)
+  const { data: companiesData } = useCompanies(1, 100)
+  const { create: createUser, update: updateUser, delete: deleteUser } = useUserMutations()
+  const users = usersData?.data || []
+  const companies = companiesData?.data?.data || []
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingUser, setEditingUser] = useState(null)
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
-    role: 'Caissier',
-    companyId: ''
+    password: '',
+    role: 'CASHIER',
+    companyId: '',
   })
 
   const handleCreate = () => {
@@ -39,8 +31,9 @@ export default function Users() {
     setFormData({
       fullName: '',
       email: '',
-      role: 'Caissier',
-      companyId: ''
+      password: '',
+      role: 'CASHIER',
+      companyId: '',
     })
     setIsDialogOpen(true)
   }
@@ -48,52 +41,41 @@ export default function Users() {
   const handleEdit = (user) => {
     setEditingUser(user)
     setFormData({
-      fullName: user.fullName,
-      email: user.email,
-      role: user.role,
-      companyId: user.companyId.toString()
+      fullName: user.fullName || '',
+      email: user.email || '',
+      password: '', // Don't show password
+      role: user.role || 'CASHIER',
+      companyId: user.companyId?.toString() || '',
     })
     setIsDialogOpen(true)
   }
 
-  const handleToggleActive = (id) => {
-    setUsers(users.map(user =>
-      user.id === id ? { ...user, isActive: !user.isActive } : user
-    ))
-  }
-
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) {
-      setUsers(users.filter(user => user.id !== id))
+      try {
+        await deleteUser.mutateAsync(id)
+      } catch (error) {
+        console.error('Erreur lors de la suppression:', error)
+      }
     }
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    const company = mockCompanies.find(c => c.id.toString() === formData.companyId)
-    if (editingUser) {
-      setUsers(users.map(user =>
-        user.id === editingUser.id
-          ? {
-              ...user,
-              ...formData,
-              companyId: parseInt(formData.companyId),
-              companyName: company.name
-            }
-          : user
-      ))
-    } else {
-      const newUser = {
-        id: Math.max(...users.map(u => u.id)) + 1,
+    try {
+      const dataToSend = {
         ...formData,
-        companyId: parseInt(formData.companyId),
-        companyName: company.name,
-        isActive: true,
-        createdAt: new Date().toISOString().split('T')[0]
+        companyId: formData.companyId ? parseInt(formData.companyId) : null,
       }
-      setUsers([...users, newUser])
+      if (editingUser) {
+        await updateUser.mutateAsync({ id: editingUser.id, data: dataToSend })
+      } else {
+        await createUser.mutateAsync(dataToSend)
+      }
+      setIsDialogOpen(false)
+    } catch (error) {
+      console.error('Erreur lors de la sauvegarde:', error)
     }
-    setIsDialogOpen(false)
   }
 
   return (
@@ -129,7 +111,7 @@ export default function Users() {
                   <TableCell className="font-medium">{user.fullName}</TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>{user.role}</TableCell>
-                  <TableCell>{user.companyName}</TableCell>
+                  <TableCell>{companies.find(c => c.id === user.companyId)?.name || 'N/A'}</TableCell>
                   <TableCell>
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                       user.isActive
@@ -152,7 +134,7 @@ export default function Users() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleToggleActive(user.id)}
+                        onClick={() => handleEdit({ ...user, isActive: !user.isActive })}
                         className={user.isActive ? 'text-orange-600 hover:text-orange-700' : 'text-green-600 hover:text-green-700'}
                       >
                         {user.isActive ? <UserX className="w-4 h-4" /> : <UserCheck className="w-4 h-4" />}
@@ -201,6 +183,18 @@ export default function Users() {
                 required
               />
             </div>
+            {!editingUser && (
+              <div className="space-y-2">
+                <Label htmlFor="password">Mot de passe</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  required={!editingUser}
+                />
+              </div>
+            )}
             <div className="space-y-2">
               <Label htmlFor="role">Rôle</Label>
               <Select value={formData.role} onValueChange={(value) => setFormData({ ...formData, role: value })}>
@@ -208,8 +202,9 @@ export default function Users() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Admin">Admin</SelectItem>
-                  <SelectItem value="Caissier">Caissier</SelectItem>
+                  <SelectItem value="ADMIN">Admin</SelectItem>
+                  <SelectItem value="CASHIER">Caissier</SelectItem>
+                  <SelectItem value="EMPLOYEE">Employé</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -220,7 +215,7 @@ export default function Users() {
                   <SelectValue placeholder="Sélectionner une entreprise" />
                 </SelectTrigger>
                 <SelectContent>
-                  {mockCompanies.map((company) => (
+                  {companies.map((company) => (
                     <SelectItem key={company.id} value={company.id.toString()}>
                       {company.name}
                     </SelectItem>
