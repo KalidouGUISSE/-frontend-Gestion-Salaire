@@ -21,7 +21,7 @@ export default defineConfig(({ mode }) => {
       proxy: {
         // tout ce qui commence par /api sera redirigé vers ton backend
         '/api': {
-          target: 'http://localhost:3000',
+          target: 'https://backend-gestion-salaire.onrender.com',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ''),
         },

@@ -115,7 +115,7 @@ export default function EmployeeDetails() {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <img
-                    src={hasImageError ? '/image.png' : (emp.photos ? `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/${emp.photos.replace(/^\/+/, '')}` : '/image.png')}
+                    src={hasImageError ? '/image.png' : (emp.photos ? `${import.meta.env.VITE_API_URL || 'https://backend-gestion-salaire.onrender.com'}/${emp.photos.replace(/^\/+/, '')}` : '/image.png')}
                     alt={emp.fullName}
                     className="w-10 h-10 rounded-full mr-3 object-cover"
                     onError={() => setHasImageError(true)}
@@ -282,7 +282,7 @@ export default function EmployeeDetails() {
                 <div className="flex flex-col items-center space-y-4">
                   <div className="border-2 border-gray-200 rounded-lg p-4">
                     <img
-                      src={`http://localhost:3000/${emp.profile.qrCodePath}`}
+                      src={`https://backend-gestion-salaire.onrender.com/${emp.profile.qrCodePath}`}
                       alt="QR Code"
                       className="w-48 h-48"
                       onError={(e) => {

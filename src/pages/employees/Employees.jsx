@@ -475,7 +475,7 @@ function EmployeeList({ employees }) {
             <CardHeader>
               <div className="flex items-center space-x-4">
                 <img
-                  src={employee.photos ? `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/${employee.photos.replace(/^\/+/, '')}` : '/image.png'}
+                  src={employee.photos ? `${import.meta.env.VITE_API_URL || 'https://backend-gestion-salaire.onrender.com'}/${employee.photos.replace(/^\/+/, '')}` : '/image.png'}
                   alt={employee.fullName}
                   className="w-12 h-12 rounded-full object-cover"
                   onError={(e) => { e.currentTarget.src = '/image.png' }}
