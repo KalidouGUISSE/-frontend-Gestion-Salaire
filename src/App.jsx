@@ -55,11 +55,9 @@ function App() {
     const callBackend = async () => {
       try {
         const user = await usersApi.getById(1)
-        // console.log('✅ Backend appelé avec succès:', user)
-        console.log('✅')
-
+        console.log('✅ Backend appelé avec succès:', user)
       } catch (error) {
-        console.error('❌')
+        console.error('❌ Erreur appel backend:', error)
       }
     }
 
