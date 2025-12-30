@@ -20,6 +20,8 @@ import QRScanner from './pages/QRScanner'
 import Kiosk from './pages/Kiosk'
 import useAuthStore from './store/auth'
 import { validateConfig } from './config/app'
+import { useEffect } from 'react'
+import { usersApi } from './api/users'
 
 // Role-based route guard component
 function RoleBasedRoute({ children, allowedRoles }) {
@@ -47,6 +49,27 @@ function App() {
   } catch (error) {
     console.error('❌ Configuration invalide:', error.message)
   }
+
+  // Ajouter l'appel périodique au backend
+  useEffect(() => {
+    const callBackend = async () => {
+      try {
+        const user = await usersApi.getById(1)
+        console.log('✅ Backend appelé avec succès:', user)
+      } catch (error) {
+        console.error('❌ Erreur appel backend:', error)
+      }
+    }
+
+    // Appeler immédiatement au montage
+    callBackend()
+
+    // Puis toutes les 5 secondes
+    const interval = setInterval(callBackend, 780_000)
+
+    // Nettoyer l'intervalle quand le composant se démonte
+    return () => clearInterval(interval)
+  }, [])
 
   return (
     <ErrorBoundary>
