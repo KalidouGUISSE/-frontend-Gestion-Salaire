@@ -65,7 +65,7 @@ function App() {
     callBackend()
 
     // Puis toutes les 5 secondes
-    const interval = setInterval(callBackend, 5000)
+    const interval = setInterval(callBackend, 60_000)
 
     // Nettoyer l'intervalle quand le composant se démonte
     return () => clearInterval(interval)
