@@ -58,8 +58,8 @@ export default function Layout() {
                         </svg>
                       </div>
                       <div className="flex-1">
-                        <div className="font-medium">Dashboard Super-Admin</div>
-                        <div className={`text-xs ${isActive ? 'text-white/70' : 'text-muted-foreground'}`}>Vue d'ensemble globale</div>
+                        <div className="font-medium">Dashboard</div>
+                        {/* <div className={`text-xs ${isActive ? 'text-white/70' : 'text-muted-foreground'}`}>Vue d'ensemble globale</div> */}
                       </div>
                     </>
                   )}
@@ -86,7 +86,7 @@ export default function Layout() {
                       </div>
                       <div className="flex-1">
                         <div className="font-medium">Entreprises</div>
-                        <div className={`text-xs ${isActive ? 'text-white/70' : 'text-muted-foreground'}`}>Gestion des entreprises</div>
+                        {/* <div className={`text-xs ${isActive ? 'text-white/70' : 'text-muted-foreground'}`}>Gestion des entreprises</div> */}
                       </div>
                     </>
                   )}
@@ -113,7 +113,7 @@ export default function Layout() {
                       </div>
                       <div className="flex-1">
                         <div className="font-medium">Utilisateurs</div>
-                        <div className={`text-xs ${isActive ? 'text-white/70' : 'text-muted-foreground'}`}>Gestion des utilisateurs</div>
+                        {/* <div className={`text-xs ${isActive ? 'text-white/70' : 'text-muted-foreground'}`}>Gestion des utilisateurs</div> */}
                       </div>
                     </>
                   )}
@@ -202,6 +202,33 @@ export default function Layout() {
                     </>
                   )}
                 </NavLink>
+
+                {/* <NavLink
+                  to="/qr-scanner"
+                  className={({ isActive }) =>
+                    `group flex items-center px-4 py-4 rounded-2xl text-sm font-medium transition-modern ${
+                      isActive
+                        ? 'bg-gradient-modern text-white shadow-glow'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                    }`
+                  }
+                >
+                  {({ isActive }) => (
+                    <>
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center mr-4 ${
+                        isActive ? 'bg-white/20' : 'bg-muted/50 group-hover:bg-muted'
+                      }`}>
+                        <svg className={`w-5 h-5 ${isActive ? 'text-white' : 'text-muted-foreground group-hover:text-foreground'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M12 15h4.01M12 21h4.01M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M12 15h4.01M12 21h4.01M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M12 15h4.01M12 21h4.01" />
+                        </svg>
+                      </div>
+                      <div className="flex-1">
+                        <div className="font-medium">Scanner QR</div>
+                        <div className={`text-xs ${isActive ? 'text-white/70' : 'text-muted-foreground'}`}>Vérifier employé</div>
+                      </div>
+                    </>
+                  )}
+                </NavLink> */}
               </>
             ) : (
               // Navigation complète pour ADMIN et autres rôles
@@ -227,7 +254,7 @@ export default function Layout() {
                       </div>
                       <div className="flex-1">
                         <div className="font-medium">Dashboard</div>
-                        <div className={`text-xs ${isActive ? 'text-white/70' : 'text-muted-foreground'}`}>Vue d'ensemble</div>
+                        {/* <div className={`text-xs ${isActive ? 'text-white/70' : 'text-muted-foreground'}`}>Vue d'ensemble</div> */}
                       </div>
                     </>
                   )}
@@ -254,7 +281,7 @@ export default function Layout() {
                       </div>
                       <div className="flex-1">
                         <div className="font-medium">Employés</div>
-                        <div className={`text-xs ${isActive ? 'text-white/70' : 'text-muted-foreground'}`}>Gestion du personnel</div>
+                        {/* <div className={`text-xs ${isActive ? 'text-white/70' : 'text-muted-foreground'}`}>Gestion du personnel</div> */}
                       </div>
                     </>
                   )}
@@ -281,7 +308,7 @@ export default function Layout() {
                       </div>
                       <div className="flex-1">
                         <div className="font-medium">Cycles de Paie</div>
-                        <div className={`text-xs ${isActive ? 'text-white/70' : 'text-muted-foreground'}`}>Gestion des cycles</div>
+                        {/* <div className={`text-xs ${isActive ? 'text-white/70' : 'text-muted-foreground'}`}>Gestion des cycles</div> */}
                       </div>
                     </>
                   )}
@@ -308,7 +335,7 @@ export default function Layout() {
                       </div>
                       <div className="flex-1">
                         <div className="font-medium">Paiements</div>
-                        <div className={`text-xs ${isActive ? 'text-white/70' : 'text-muted-foreground'}`}>Gestion des paiements</div>
+                        {/* <div className={`text-xs ${isActive ? 'text-white/70' : 'text-muted-foreground'}`}>Gestion des paiements</div> */}
                       </div>
                     </>
                   )}
@@ -335,7 +362,7 @@ export default function Layout() {
                       </div>
                       <div className="flex-1">
                         <div className="font-medium">Bulletins</div>
-                        <div className={`text-xs ${isActive ? 'text-white/70' : 'text-muted-foreground'}`}>Fiches de paie</div>
+                        {/* <div className={`text-xs ${isActive ? 'text-white/70' : 'text-muted-foreground'}`}>Fiches de paie</div> */}
                       </div>
                     </>
                   )}
@@ -362,7 +389,7 @@ export default function Layout() {
                       </div>
                       <div className="flex-1">
                         <div className="font-medium">Documents</div>
-                        <div className={`text-xs ${isActive ? 'text-white/70' : 'text-muted-foreground'}`}>Gestion documentaire</div>
+                        {/* <div className={`text-xs ${isActive ? 'text-white/70' : 'text-muted-foreground'}`}>Gestion documentaire</div> */}
                       </div>
                     </>
                   )}

@@ -61,7 +61,7 @@ export default function SuperAdminDashboard() {
             </svg>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{mockKPIs.totalUsers}</div>
+            <div className="text-2xl font-bold">{mockRecentCompanies.length}</div>
             <p className="text-xs text-muted-foreground">Admins + Caissiers</p>
           </CardContent>
         </Card>
@@ -90,7 +90,7 @@ export default function SuperAdminDashboard() {
             <LineChart data={mockChartData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
-              <YAxis />
+              <YAxis />handleEdit
               <Tooltip />
               <Line type="monotone" dataKey="companies" stroke="#2563eb" strokeWidth={2} />
             </LineChart>

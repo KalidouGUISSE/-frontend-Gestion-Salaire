@@ -16,9 +16,12 @@ import PayRuns from './pages/PayRuns'
 import Payslips from './pages/Payslips'
 import Payments from './pages/Payments'
 import Documents from './pages/Documents'
+import QRScanner from './pages/QRScanner'
 import Kiosk from './pages/Kiosk'
 import useAuthStore from './store/auth'
 import { validateConfig } from './config/app'
+import { useEffect } from 'react'
+import { usersApi } from './api/users'
 
 // Role-based route guard component
 function RoleBasedRoute({ children, allowedRoles }) {
@@ -46,6 +49,27 @@ function App() {
   } catch (error) {
     console.error('❌ Configuration invalide:', error.message)
   }
+
+  // Ajouter l'appel périodique au backend
+  useEffect(() => {
+    const callBackend = async () => {
+      try {
+        const user = await usersApi.getById(1)
+        console.log('✅ Backend appelé avec succès:', user)
+      } catch (error) {
+        console.error('❌ Erreur appel backend:', error)
+      }
+    }
+
+    // Appeler immédiatement au montage
+    callBackend()
+
+    // Puis toutes les 5 secondes
+    const interval = setInterval(callBackend, 5000)
+
+    // Nettoyer l'intervalle quand le composant se démonte
+    return () => clearInterval(interval)
+  }, [])
 
   return (
     <ErrorBoundary>
@@ -90,6 +114,11 @@ function App() {
               } />
               <Route path="payslips" element={<Payslips />} />
               <Route path="payments" element={<Payments />} />
+              <Route path="qr-scanner" element={
+                <RoleBasedRoute allowedRoles={['CASHIER', 'ADMIN', 'SUPER_ADMIN']}>
+                  <QRScanner />
+                </RoleBasedRoute>
+              } />
               <Route path="documents" element={
                 <RoleBasedRoute allowedRoles={['ADMIN', 'SUPER_ADMIN']}>
                   <Documents />

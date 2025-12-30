@@ -161,7 +161,7 @@ export default function Login() {
                 )}
               </Button>
 
-              <div className="text-center pt-4">
+              {/* <div className="text-center pt-4">
                 <Button
                   type="button"
                   variant="link"
@@ -170,6 +170,12 @@ export default function Login() {
                 >
                   Pas encore de compte ? S'inscrire
                 </Button>
+              </div> */}
+
+              <div className="text-center pt-4">
+                <p className="text-sm text-muted-foreground mb-2">Utilisateurs de test :</p>
+                <p className="text-xs text-muted-foreground">superadmin@demo.com / password123</p>
+                <p className="text-xs text-muted-foreground">admin1@techsolutions.sn / password123</p>
               </div>
             </form>
           </Form>

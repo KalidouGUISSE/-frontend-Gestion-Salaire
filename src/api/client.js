@@ -136,7 +136,10 @@ class ApiClient {
   get(endpoint, options = {}) {    
     console.log('je  suit la endpoint',endpoint)
 
-    return this.request(endpoint, { ...options, method: 'GET' })
+    return this.request(endpoint, { 
+      ...options, 
+      method: 'GET',
+    })
   }
 
   post(endpoint, data, options = {}) {

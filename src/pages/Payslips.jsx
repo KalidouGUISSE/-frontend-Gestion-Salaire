@@ -419,8 +419,8 @@ export default function Payslips() {
           </div>
           <div className="flex items-center justify-end space-x-2 py-4">
             <div className="flex-1 text-sm text-muted-foreground">
-              {table.getFilteredSelectedRowModel().rows.length} sur{' '}
-              {table.getFilteredRowModel().rows.length} ligne(s) sélectionnée(s).
+              {/* {table.getFilteredSelectedRowModel().rows.length} sur{' '}
+              {table.getFilteredRowModel().rows.length} ligne(s) sélectionnée(s). */}
             </div>
             <div className="space-x-2">
               <Button

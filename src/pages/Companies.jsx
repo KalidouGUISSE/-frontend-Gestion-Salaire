@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Plus, Eye, Edit, Trash2, UserPlus } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useCompanies, useCompanyMutations } from '@/features/companies/hooks/useCompanies'
+import { LoadingSpinner } from '@/components/Spinner'
 
 export default function Companies() {
   const navigate = useNavigate()
@@ -93,7 +94,7 @@ export default function Companies() {
     console.log('Viewing company:', company)
   }
 
-  if (isLoading) return <div>Chargement...</div>
+  if (isLoading) return <LoadingSpinner />
   if (error) return <div>Erreur lors du chargement des entreprises</div>
 
   return (
@@ -142,18 +143,19 @@ export default function Companies() {
                   <TableCell>{new Date(company.createdAt).toLocaleDateString()}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end space-x-2">
-                      <Button
+                      {/* <Button
                         variant="default"
                         size="sm"
                         className="bg-blue-600 text-white hover:bg-blue-700"
                         onClick={() => navigate(`/employees/company/${company.id}`)}
                       >
                         Accéder
-                      </Button>
+                      </Button> */}
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleView(company)}
+                        // onClick={() => handleView(company)}
+                        onClick={() => navigate(`/employees/company/${company.id}`)}
                       >
                         <Eye className="w-4 h-4" />
                       </Button>

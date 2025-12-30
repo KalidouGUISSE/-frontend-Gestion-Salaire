@@ -38,7 +38,7 @@ function EmployeeForm({ form, onSubmit, submitText, pendingText, isPending }) {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8" encType="multipart/form-data">
           {/* Section Informations personnelles */}
           <div className="space-y-6">
-            <div className="flex items-center space-x-3 pb-2 border-b border-gray-200">
+            {/* <div className="flex items-center space-x-3 pb-2 border-b border-gray-200">
               <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
                 <User className="w-5 h-5 text-white" />
               </div>
@@ -46,7 +46,7 @@ function EmployeeForm({ form, onSubmit, submitText, pendingText, isPending }) {
                 <h3 className="text-lg font-semibold text-gray-900">Informations personnelles</h3>
                 <p className="text-sm text-gray-600">Détails de base de l'employé</p>
               </div>
-            </div>
+            </div> */}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
@@ -255,7 +255,7 @@ function EmployeeForm({ form, onSubmit, submitText, pendingText, isPending }) {
 
           {/* Section Photo de profil */}
           <div className="space-y-6">
-            <div className="flex items-center space-x-3 pb-2 border-b border-gray-200">
+            {/* <div className="flex items-center space-x-3 pb-2 border-b border-gray-200">
               <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-rose-600 rounded-xl flex items-center justify-center">
                 <Camera className="w-5 h-5 text-white" />
               </div>
@@ -263,7 +263,7 @@ function EmployeeForm({ form, onSubmit, submitText, pendingText, isPending }) {
                 <h3 className="text-lg font-semibold text-gray-900">Photo de profil</h3>
                 <p className="text-sm text-gray-600">Ajoutez une photo pour identifier l'employé</p>
               </div>
-            </div>
+            </div> */}
 
             <FormItem>
               <FormLabel className="flex items-center text-sm font-medium text-gray-700">
@@ -475,7 +475,7 @@ function EmployeeList({ employees }) {
             <CardHeader>
               <div className="flex items-center space-x-4">
                 <img
-                  src={employee.photos ? `${import.meta.env.VITE_API_URL || 'https://backend-gestion-salaire.onrender.com'}/${employee.photos.replace(/^\/+/, '')}` : '/image.png'}
+                  src={employee.photos ? `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/${employee.photos.replace(/^\/+/, '')}` : '/image.png'}
                   alt={employee.fullName}
                   className="w-12 h-12 rounded-full object-cover"
                   onError={(e) => { e.currentTarget.src = '/image.png' }}

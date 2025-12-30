@@ -241,9 +241,9 @@ export default function PayRuns() {
       <Card>
         <CardHeader>
           <CardTitle>Liste des cycles</CardTitle>
-          <CardDescription>
+          {/* <CardDescription>
             {data?.total || 0} cycle(s)
-          </CardDescription>
+          </CardDescription> */}
         </CardHeader>
         <CardContent>
           <div className="flex items-center py-4">
@@ -304,8 +304,8 @@ export default function PayRuns() {
           </div>
           <div className="flex items-center justify-end space-x-2 py-4">
             <div className="flex-1 text-sm text-muted-foreground">
-              {table.getFilteredSelectedRowModel().rows.length} sur{' '}
-              {table.getFilteredRowModel().rows.length} ligne(s) sélectionnée(s).
+              {/* {table.getFilteredSelectedRowModel().rows.length} sur{' '}
+              {table.getFilteredRowModel().rows.length} ligne(s) sélectionnée(s). */}
             </div>
             <div className="space-x-2">
               <Button

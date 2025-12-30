@@ -115,7 +115,7 @@ export default function EmployeeDetails() {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <img
-                    src={hasImageError ? '/image.png' : (emp.photos ? `${import.meta.env.VITE_API_URL || 'https://backend-gestion-salaire.onrender.com'}/${emp.photos.replace(/^\/+/, '')}` : '/image.png')}
+                    src={hasImageError ? '/image.png' : (emp.photos ? `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/${emp.photos.replace(/^\/+/, '')}` : '/image.png')}
                     alt={emp.fullName}
                     className="w-10 h-10 rounded-full mr-3 object-cover"
                     onError={() => setHasImageError(true)}
@@ -282,7 +282,7 @@ export default function EmployeeDetails() {
                 <div className="flex flex-col items-center space-y-4">
                   <div className="border-2 border-gray-200 rounded-lg p-4">
                     <img
-                      src={`https://backend-gestion-salaire.onrender.com/${emp.profile.qrCodePath}`}
+                      src={`http://localhost:3000/${emp.profile.qrCodePath}`}
                       alt="QR Code"
                       className="w-48 h-48"
                       onError={(e) => {
@@ -290,14 +290,14 @@ export default function EmployeeDetails() {
                         e.target.style.display = 'none'
                       }}
                     />
-                    <p className="text-xs text-gray-500 mt-2">Chemin: {emp.profile.qrCodePath}</p>
+                    {/* <p className="text-xs text-gray-500 mt-2">Chemin: {emp.profile.qrCodePath}</p> */}
                   </div>
-                  <div className="text-center">
+                  {/* <div className="text-center">
                     <p className="text-sm text-gray-600 mb-2">Token QR:</p>
                     <code className="bg-gray-100 px-3 py-1 rounded text-sm font-mono">
                       {emp.profile.qrToken}
                     </code>
-                  </div>
+                  </div> */}
                   <div className="text-center text-sm text-gray-500">
                     <p>Présentez ce QR code lors de vos paiements pour valider votre identité.</p>
                     <p>Le scanner lira automatiquement le code et confirmera votre identité.</p>

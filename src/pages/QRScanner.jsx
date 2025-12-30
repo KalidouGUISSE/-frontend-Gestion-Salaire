@@ -25,7 +25,7 @@ export default function QRScanner() {
     try {
       // For demo purposes, we'll use a direct API call
       // In a real app, you'd use a QR scanner library
-      const response = await fetch(`https://backend-gestion-salaire.onrender.com/employees/verify-qr/${token}`)
+      const response = await fetch(`http://localhost:3000/employees/verify-qr/${token}`)
       const data = await response.json()
 
       if (data.success) {
