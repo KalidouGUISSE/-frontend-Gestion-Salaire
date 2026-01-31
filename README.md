@@ -672,8 +672,9 @@ Les composants UI sont isolés dans [`src/components/ui/`](src/components/ui/) e
 |---|---|
 | **Nom** | Kalidou Guissé |
 | **Rôle** | Développeur Frontend |
+| **Backend API** | [https://github.com/KalidouGUISSE/backend-gestion-salaire](https://github.com/KalidouGUISSE/backend-gestion-salaire) |
 | **GitHub** | [https://github.com/KalidouGUISSE](https://github.com/KalidouGUISSE) |
-| **Repository** | [https://github.com/KalidouGUISSE/-frontend-Gestion-Salaire](https://github.com/KalidouGUISSE/-frontend-Gestion-Salaire) |
+| **Portfolio** | [https://kalidou-guisse-porte-follio.vercel.app](https://kalidou-guisse-porte-follio.vercel.app) |
 
 ---
 
